@@ -1,765 +1,395 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Dashboard Master Tandon</title>
+<title>Dashboard Master 6 Tandon</title>
 
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-body {
-    font-family:
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-    min-height: 100vh;
-
-    padding: 15px;
-
-    color: #e2e8f0;
-
+body{
+    font-family:"Segoe UI",Arial,sans-serif;
+    min-height:100vh;
+    padding:15px;
+    color:#e2e8f0;
     background:
-        radial-gradient(
-            circle at top,
-            #172554 0%,
-            #0f172a 42%,
-            #020617 100%
-        );
+        radial-gradient(circle at top,#172554 0%,#0f172a 40%,#020617 100%);
 }
 
-.container {
-    width: 100%;
-    max-width: 1400px;
-    margin: auto;
+.container{
+    max-width:1400px;
+    margin:auto;
 }
 
+/* HEADER */
 
-/* =====================================================
-   HEADER
-===================================================== */
-
-.header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 15px;
-
-    margin-bottom: 18px;
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
 }
 
-.title-area {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
+.title-area{
+    display:flex;
+    align-items:center;
+    gap:13px;
 }
 
-.logo {
-
-    width: 52px;
-    height: 52px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 15px;
-
-    font-size: 27px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #38bdf8,
-            #2563eb
-        );
-
-    box-shadow:
-        0 10px 30px
-        rgba(37,99,235,.30);
+.logo{
+    width:52px;
+    height:52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    font-size:27px;
+    background:linear-gradient(135deg,#38bdf8,#2563eb);
 }
 
-.title {
-
-    font-size: 25px;
-
-    font-weight: 900;
-
-    color: #f8fafc;
+.title{
+    font-size:25px;
+    font-weight:900;
+    color:#f8fafc;
 }
 
-.subtitle {
-
-    margin-top: 3px;
-
-    font-size: 11px;
-
-    color: #94a3b8;
+.subtitle{
+    margin-top:4px;
+    font-size:12px;
+    color:#94a3b8;
 }
 
-.broker-status {
-
-    padding: 9px 14px;
-
-    border-radius: 20px;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    white-space: nowrap;
+.broker-status{
+    padding:9px 15px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:800;
+    white-space:nowrap;
 }
 
-.connected {
-
-    color: #4ade80;
-
-    background:
-        rgba(34,197,94,.14);
+.connected{
+    color:#4ade80;
+    background:rgba(34,197,94,.14);
 }
 
-.disconnected {
-
-    color: #f87171;
-
-    background:
-        rgba(239,68,68,.14);
+.disconnected{
+    color:#f87171;
+    background:rgba(239,68,68,.14);
 }
 
+/* SUMMARY */
 
-/* =====================================================
-   SUMMARY
-===================================================== */
-
-.summary {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 12px;
-
-    margin-bottom: 18px;
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:20px;
 }
 
-.summary-card {
-
-    padding: 16px;
-
-    border-radius: 17px;
-
-    background:
-        rgba(15,23,42,.88);
-
-    border:
-        1px solid
-        rgba(148,163,184,.12);
+.summary-card{
+    padding:17px;
+    border-radius:18px;
+    background:rgba(15,23,42,.88);
+    border:1px solid rgba(148,163,184,.12);
 }
 
-.summary-label {
-
-    font-size: 10px;
-
-    color: #64748b;
-
-    margin-bottom: 5px;
+.summary-label{
+    font-size:10px;
+    color:#64748b;
+    margin-bottom:6px;
 }
 
-.summary-value {
-
-    font-size: 23px;
-
-    font-weight: 900;
-
-    color: #f8fafc;
+.summary-value{
+    font-size:23px;
+    font-weight:900;
+    color:#f8fafc;
 }
 
+/* TANK GRID */
 
-/* =====================================================
-   TANK GRID
-===================================================== */
-
-.tank-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 17px;
+.tank-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
 }
 
+/* TANK CARD */
 
-/* =====================================================
-   TANK CARD
-===================================================== */
-
-.tank-card {
-
-    padding: 20px;
-
-    border-radius: 22px;
-
-    background:
-        rgba(15,23,42,.92);
-
-    border:
-        1px solid
-        rgba(148,163,184,.12);
-
-    box-shadow:
-        0 18px 45px
-        rgba(0,0,0,.23);
+.tank-card{
+    padding:20px;
+    border-radius:22px;
+    background:rgba(15,23,42,.92);
+    border:1px solid rgba(148,163,184,.12);
+    box-shadow:0 18px 45px rgba(0,0,0,.25);
 }
 
-.tank-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 10px;
-
-    margin-bottom: 18px;
+.tank-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    gap:10px;
 }
 
-.tank-name {
-
-    font-size: 18px;
-
-    font-weight: 900;
-
-    color: #f8fafc;
+.tank-name{
+    font-size:19px;
+    font-weight:900;
 }
 
-.location {
-
-    margin-top: 3px;
-
-    font-size: 10px;
-
-    color: #64748b;
+.location{
+    margin-top:4px;
+    font-size:11px;
+    color:#64748b;
 }
 
-.device-status {
-
-    padding: 6px 9px;
-
-    border-radius: 15px;
-
-    font-size: 9px;
-
-    font-weight: 800;
-
-    white-space: nowrap;
+.device-status{
+    padding:6px 10px;
+    border-radius:15px;
+    font-size:10px;
+    font-weight:800;
+    white-space:nowrap;
 }
 
+/* MAIN */
 
-/* =====================================================
-   TANK MAIN
-===================================================== */
-
-.tank-main {
-
-    display: grid;
-
-    grid-template-columns:
-        1fr 145px;
-
-    align-items: center;
-
-    gap: 12px;
+.tank-main{
+    display:grid;
+    grid-template-columns:1fr 150px;
+    align-items:center;
+    gap:10px;
 }
 
-.percent {
-
-    font-size: 58px;
-
-    line-height: 1;
-
-    font-weight: 900;
-
-    color: #38bdf8;
+.percent{
+    font-size:58px;
+    line-height:1;
+    font-weight:900;
+    color:#38bdf8;
 }
 
-.level-label {
-
-    margin-top: 5px;
-
-    font-size: 11px;
-
-    color: #94a3b8;
+.level-label{
+    margin-top:6px;
+    font-size:11px;
+    color:#94a3b8;
 }
 
-.level-status {
-
-    display: inline-block;
-
-    margin-top: 11px;
-
-    padding: 6px 10px;
-
-    border-radius: 16px;
-
-    font-size: 10px;
-
-    font-weight: 800;
+.level-status{
+    display:inline-block;
+    margin-top:12px;
+    padding:7px 12px;
+    border-radius:18px;
+    font-size:10px;
+    font-weight:800;
 }
 
+/* TANK VISUAL */
 
-/* =====================================================
-   TANK VISUAL
-===================================================== */
-
-.tank-wrapper {
-
-    display: flex;
-
-    justify-content: center;
+.tank-wrapper{
+    display:flex;
+    justify-content:center;
 }
 
-.tank {
-
-    width: 105px;
-
-    height: 180px;
-
-    position: relative;
-
-    overflow: hidden;
-
-    border:
-        5px solid
-        #475569;
-
-    border-radius:
-        16px 16px 22px 22px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #1e293b,
-            #0f172a
-        );
+.tank{
+    width:110px;
+    height:185px;
+    position:relative;
+    overflow:hidden;
+    border:5px solid #475569;
+    border-radius:17px 17px 25px 25px;
+    background:linear-gradient(180deg,#1e293b,#0f172a);
 }
 
-.tank-top {
-
-    position: absolute;
-
-    top: -12px;
-
-    left: 12%;
-
-    width: 76%;
-
-    height: 23px;
-
-    border:
-        5px solid
-        #64748b;
-
-    border-radius: 50%;
-
-    background: #1e293b;
-
-    z-index: 5;
+.tank-top{
+    position:absolute;
+    top:-13px;
+    left:12%;
+    width:76%;
+    height:25px;
+    border:5px solid #64748b;
+    border-radius:50%;
+    background:#1e293b;
+    z-index:5;
 }
 
-.water {
-
-    position: absolute;
-
-    left: 0;
-
-    bottom: 0;
-
-    width: 100%;
-
-    height: 0%;
-
-    transition:
-        height .8s ease;
-
-    background:
-        linear-gradient(
-            180deg,
-            #38bdf8,
-            #2563eb
-        );
+.water{
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:0%;
+    transition:height .8s ease;
+    background:linear-gradient(180deg,#38bdf8,#2563eb);
 }
 
-.water::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: -8px;
-
-    left: -10%;
-
-    width: 120%;
-
-    height: 17px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(125,211,252,.85);
+.water::before{
+    content:"";
+    position:absolute;
+    top:-9px;
+    left:-10%;
+    width:120%;
+    height:18px;
+    border-radius:50%;
+    background:rgba(125,211,252,.85);
 }
 
+/* DATA */
 
-/* =====================================================
-   DATA
-===================================================== */
-
-.data-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap: 8px;
-
-    margin-top: 19px;
+.data-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:20px;
 }
 
-.data-box {
-
-    padding: 10px;
-
-    border-radius: 12px;
-
-    background:
-        rgba(30,41,59,.75);
+.data-box{
+    padding:10px;
+    border-radius:12px;
+    background:rgba(30,41,59,.75);
 }
 
-.data-label {
-
-    font-size: 9px;
-
-    color: #64748b;
+.data-label{
+    font-size:9px;
+    color:#64748b;
 }
 
-.data-value {
-
-    margin-top: 4px;
-
-    font-size: 13px;
-
-    font-weight: 800;
-
-    color: #f8fafc;
-
-    word-break: break-word;
+.data-value{
+    margin-top:5px;
+    font-size:13px;
+    font-weight:800;
+    color:#f8fafc;
+    word-break:break-word;
 }
 
+/* GRAPH */
 
-/* =====================================================
-   GRAPH
-===================================================== */
-
-.graph-section {
-
-    margin-top: 18px;
-
-    padding: 20px;
-
-    border-radius: 20px;
-
-    background:
-        rgba(15,23,42,.92);
-
-    border:
-        1px solid
-        rgba(148,163,184,.12);
+.chart-card{
+    margin-top:20px;
+    padding:20px;
+    border-radius:22px;
+    background:rgba(15,23,42,.92);
+    border:1px solid rgba(148,163,184,.12);
 }
 
-.graph-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 15px;
-
-    gap: 10px;
+.chart-title{
+    font-size:18px;
+    font-weight:900;
+    margin-bottom:5px;
 }
 
-.graph-title {
-
-    font-size: 17px;
-
-    font-weight: 900;
+.chart-subtitle{
+    font-size:11px;
+    color:#64748b;
+    margin-bottom:15px;
 }
 
-.graph-info {
-
-    font-size: 10px;
-
-    color: #64748b;
+.chart-container{
+    position:relative;
+    width:100%;
+    height:350px;
 }
 
-.graph-box {
+/* FOOTER */
 
-    width: 100%;
-
-    overflow-x: auto;
+.footer{
+    text-align:center;
+    margin-top:22px;
+    color:#475569;
+    font-size:10px;
 }
 
-canvas {
+/* RESPONSIVE */
 
-    display: block;
+@media(max-width:1000px){
 
-    width: 100%;
-
-    height: 300px;
-
-    background:
-        rgba(2,6,23,.35);
-
-    border-radius: 14px;
-}
-
-
-/* =====================================================
-   HISTORY TABLE
-===================================================== */
-
-.history-section {
-
-    margin-top: 18px;
-
-    padding: 18px;
-
-    border-radius: 20px;
-
-    background:
-        rgba(15,23,42,.92);
-
-    border:
-        1px solid
-        rgba(148,163,184,.12);
-}
-
-.history-title {
-
-    font-size: 17px;
-
-    font-weight: 900;
-
-    margin-bottom: 13px;
-}
-
-.table-wrap {
-
-    width: 100%;
-
-    overflow-x: auto;
-}
-
-table {
-
-    width: 100%;
-
-    border-collapse: collapse;
-
-    min-width: 650px;
-}
-
-th,
-td {
-
-    padding: 9px;
-
-    text-align: left;
-
-    border-bottom:
-        1px solid
-        rgba(148,163,184,.08);
-
-    font-size: 10px;
-}
-
-th {
-
-    color: #64748b;
-
-    font-weight: 700;
-}
-
-td {
-
-    color: #e2e8f0;
-}
-
-
-/* =====================================================
-   FOOTER
-===================================================== */
-
-.footer {
-
-    text-align: center;
-
-    margin-top: 22px;
-
-    padding-bottom: 10px;
-
-    color: #475569;
-
-    font-size: 10px;
-}
-
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media(max-width:900px) {
-
-    .summary {
-
-        grid-template-columns:
-            repeat(2,1fr);
+    .tank-grid{
+        grid-template-columns:1fr;
     }
 
-    .tank-grid {
-
-        grid-template-columns:
-            1fr;
-    }
 }
 
+@media(max-width:700px){
 
-@media(max-width:550px) {
-
-    body {
-
-        padding: 9px;
+    body{
+        padding:9px;
     }
 
-    .header {
-
-        align-items: flex-start;
+    .header{
+        align-items:flex-start;
     }
 
-    .title {
-
-        font-size: 18px;
+    .title{
+        font-size:19px;
     }
 
-    .subtitle {
-
-        font-size: 9px;
+    .summary{
+        grid-template-columns:1fr 1fr;
     }
 
-    .logo {
-
-        width: 43px;
-        height: 43px;
-
-        font-size: 22px;
+    .tank-main{
+        grid-template-columns:1fr 130px;
     }
 
-    .broker-status {
-
-        padding: 7px 9px;
-
-        font-size: 9px;
+    .data-grid{
+        grid-template-columns:1fr 1fr;
     }
 
-    .summary {
-
-        grid-template-columns:
-            1fr 1fr;
-
-        gap: 8px;
+    .chart-container{
+        height:280px;
     }
 
-    .summary-card {
-
-        padding: 12px;
-    }
-
-    .summary-value {
-
-        font-size: 19px;
-    }
-
-    .tank-card {
-
-        padding: 15px;
-    }
-
-    .tank-main {
-
-        grid-template-columns:
-            1fr 115px;
-    }
-
-    .percent {
-
-        font-size: 48px;
-    }
-
-    .tank {
-
-        width: 85px;
-
-        height: 155px;
-    }
-
-    .data-grid {
-
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-    canvas {
-
-        height: 240px;
-    }
 }
 
+@media(max-width:500px){
+
+    .header{
+        flex-direction:column;
+    }
+
+    .broker-status{
+        align-self:flex-start;
+    }
+
+    .summary{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .tank-main{
+        grid-template-columns:1fr;
+    }
+
+    .tank-wrapper{
+        order:-1;
+    }
+
+    .percent{
+        font-size:52px;
+    }
+
+    .tank{
+        width:105px;
+        height:175px;
+    }
+
+    .chart-container{
+        height:250px;
+    }
+
+}
 </style>
-
 </head>
-
 
 <body>
 
 <div class="container">
-
 
 <!-- =====================================================
      HEADER
@@ -780,13 +410,12 @@ td {
             </div>
 
             <div class="subtitle">
-                Monitoring Multi Tandon • ESP32 • HiveMQ Cloud
+                Monitoring 6 Lokasi • ESP32 • HiveMQ Cloud
             </div>
 
         </div>
 
     </div>
-
 
     <div
         id="brokerStatus"
@@ -886,94 +515,22 @@ td {
 
 
 <!-- =====================================================
-     GRAPH 24 JAM
+     GRAFIK 24 JAM
 ===================================================== -->
 
-<div class="graph-section">
+<div class="chart-card">
 
-    <div class="graph-header">
-
-        <div>
-
-            <div class="graph-title">
-                📊 Monitoring Level 24 Jam
-            </div>
-
-            <div class="graph-info">
-                Data level yang diterima oleh dashboard
-            </div>
-
-        </div>
-
+    <div class="chart-title">
+        📊 Monitoring Level Air 24 Jam
     </div>
 
-
-    <div class="graph-box">
-
-        <canvas
-            id="levelChart"
-            width="1200"
-            height="300">
-        </canvas>
-
+    <div class="chart-subtitle">
+        Grafik menyimpan data selama halaman dashboard tetap terbuka.
     </div>
 
-</div>
+    <div class="chart-container">
 
-
-<!-- =====================================================
-     HISTORY
-===================================================== -->
-
-<div class="history-section">
-
-    <div class="history-title">
-        🕒 Data Monitoring Terakhir
-    </div>
-
-
-    <div class="table-wrap">
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>
-                        Waktu
-                    </th>
-
-                    <th>
-                        Tandon
-                    </th>
-
-                    <th>
-                        Level
-                    </th>
-
-                    <th>
-                        Jarak
-                    </th>
-
-                    <th>
-                        RSSI
-                    </th>
-
-                    <th>
-                        IP
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody
-                id="historyBody">
-
-            </tbody>
-
-        </table>
+        <canvas id="levelChart"></canvas>
 
     </div>
 
@@ -981,97 +538,81 @@ td {
 
 
 <div class="footer">
-
-    ESP32 Multi Tandon Monitoring • MQTT HiveMQ Cloud
-
+    ESP32 Multi Tandon Monitoring • MQTT HiveMQ Cloud • GitHub Pages
 </div>
-
 
 </div>
 
 
 <script>
 
-/*
-============================================================
-============================================================
+/* =========================================================
+   KONFIGURASI UTAMA
+   =========================================================
 
-          KONFIGURASI UTAMA DASHBOARD
+   CUKUP UBAH BAGIAN INI.
 
-============================================================
-============================================================
+   id 1 = tandon/1/data
+   id 2 = tandon/2/data
+   id 3 = tandon/3/data
+   id 4 = tandon/4/data
+   id 5 = tandon/5/data
+   id 6 = tandon/6/data
 
-CARA GANTI NAMA TANDON:
-
-Cukup ubah bagian:
-
-name:
-location:
-
-Contoh:
-
-{
-    id: 1,
-    name: "Tandon Office",
-    location: "Gedung Office"
-}
-
-Jangan mengubah:
-
-id: 1
-
-karena ID harus sama dengan topic MQTT ESP32.
-
-============================================================
+   Nama dan lokasi bisa diganti bebas.
 */
 
 
-const TANKS = [
+const TANK_CONFIG = [
 
     {
-        id: 1,
-        name: "Tandon Office",
-        location: "Lokasi Office"
+        id:1,
+        name:"Tandon Office",
+        location:"Gedung Office",
+        color:"#38bdf8"
     },
 
     {
-        id: 2,
-        name: "Tandon Mesjid",
-        location: "Lokasi Mesjid"
+        id:2,
+        name:"Tandon Mesjid",
+        location:"Area Mesjid",
+        color:"#4ade80"
     },
 
     {
-        id: 3,
-        name: "Tandon Rumah",
-        location: "Lokasi Rumah"
+        id:3,
+        name:"Tandon 3",
+        location:"Lokasi 3",
+        color:"#facc15"
     },
 
     {
-        id: 4,
-        name: "Tandon Gudang",
-        location: "Lokasi Gudang"
+        id:4,
+        name:"Tandon 4",
+        location:"Lokasi 4",
+        color:"#fb7185"
     },
 
     {
-        id: 5,
-        name: "Tandon Belakang",
-        location: "Lokasi Belakang"
+        id:5,
+        name:"Tandon 5",
+        location:"Lokasi 5",
+        color:"#a78bfa"
     },
 
     {
-        id: 6,
-        name: "Tandon Cadangan",
-        location: "Lokasi Cadangan"
+        id:6,
+        name:"Tandon 6",
+        location:"Lokasi 6",
+        color:"#fb923c"
     }
 
 ];
 
 
-/*
-============================================================
-MQTT HIVEMQ CLOUD
-============================================================
-*/
+/* =========================================================
+   HIVEMQ CLOUD
+   ========================================================= */
 
 const MQTT_HOST =
     "a1cd69b564c54fb2a27c2ad31940a4d2.s1.eu.hivemq.cloud";
@@ -1082,11 +623,7 @@ const MQTT_PORT =
 
 
 /*
-============================================================
-MQTT LOGIN
-
-GANTI DENGAN USER DASHBOARD OM
-============================================================
+   GANTI DENGAN USER DASHBOARD MILIK ANDA
 */
 
 const MQTT_USERNAME =
@@ -1098,46 +635,268 @@ const MQTT_PASSWORD =
 
 
 /*
-============================================================
-OFFLINE TIMEOUT
+   WAKTU OFFLINE
 
-Jika tidak ada data selama 30 detik,
-tandon dianggap OFFLINE.
-
-Boleh diganti menjadi:
-
-60000 = 60 detik
-120000 = 2 menit
-============================================================
+   Jika tidak menerima DATA selama 30 detik,
+   tandon dianggap offline.
 */
 
 const OFFLINE_TIMEOUT =
     30000;
 
 
-/*
-============================================================
-RIWAYAT GRAFIK
+/* =========================================================
+   DATA INTERNAL
+========================================================= */
 
-Maksimal 24 jam.
+const tanks = {};
 
-Data disimpan di browser selama halaman aktif.
-============================================================
-*/
+TANK_CONFIG.forEach(function(config){
 
-const HISTORY_HOURS =
-    24;
+    tanks[config.id] = {
+
+        online:false,
+
+        lastMessage:0,
+
+        percent:null,
+
+        cm:null,
+
+        pulse:null,
+
+        rssi:null,
+
+        ip:null,
+
+        waktu:null,
+
+        history:[]
+
+    };
+
+});
 
 
-const MAX_HISTORY =
-    2000;
+/* =========================================================
+   BUAT HTML 6 TANDON OTOMATIS
+========================================================= */
+
+function createTankHTML(config){
+
+    return `
+
+    <div class="tank-card">
+
+        <div class="tank-header">
+
+            <div>
+
+                <div class="tank-name">
+                    💧 ${config.name}
+                </div>
+
+                <div class="location">
+                    ${config.location}
+                </div>
+
+            </div>
 
 
-/*
-============================================================
-MQTT CLIENT
-============================================================
-*/
+            <div
+                id="status${config.id}"
+                class="device-status disconnected">
+
+                🔴 OFFLINE
+
+            </div>
+
+        </div>
+
+
+        <div class="tank-main">
+
+            <div>
+
+                <div
+                    id="percent${config.id}"
+                    class="percent">
+
+                    --%
+
+                </div>
+
+
+                <div class="level-label">
+                    LEVEL AIR
+                </div>
+
+
+                <div
+                    id="levelStatus${config.id}"
+                    class="level-status">
+
+                    Menunggu data...
+
+                </div>
+
+            </div>
+
+
+            <div class="tank-wrapper">
+
+                <div class="tank">
+
+                    <div class="tank-top"></div>
+
+                    <div
+                        id="water${config.id}"
+                        class="water">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="data-grid">
+
+            <div class="data-box">
+
+                <div class="data-label">
+                    JARAK
+                </div>
+
+                <div
+                    id="cm${config.id}"
+                    class="data-value">
+
+                    -- cm
+
+                </div>
+
+            </div>
+
+
+            <div class="data-box">
+
+                <div class="data-label">
+                    PULSE
+                </div>
+
+                <div
+                    id="pulse${config.id}"
+                    class="data-value">
+
+                    -- us
+
+                </div>
+
+            </div>
+
+
+            <div class="data-box">
+
+                <div class="data-label">
+                    RSSI
+                </div>
+
+                <div
+                    id="rssi${config.id}"
+                    class="data-value">
+
+                    -- dBm
+
+                </div>
+
+            </div>
+
+
+            <div class="data-box">
+
+                <div class="data-label">
+                    WAKTU
+                </div>
+
+                <div
+                    id="time${config.id}"
+                    class="data-value">
+
+                    --
+
+                </div>
+
+            </div>
+
+
+            <div class="data-box">
+
+                <div class="data-label">
+                    IP ESP32
+                </div>
+
+                <div
+                    id="ip${config.id}"
+                    class="data-value">
+
+                    --
+
+                </div>
+
+            </div>
+
+
+            <div class="data-box">
+
+                <div class="data-label">
+                    DATA
+                </div>
+
+                <div
+                    id="data${config.id}"
+                    class="data-value">
+
+                    Menunggu
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   TAMPILKAN SEMUA TANDON
+========================================================= */
+
+const tankGrid =
+    document.getElementById(
+        "tankGrid"
+    );
+
+
+TANK_CONFIG.forEach(function(config){
+
+    tankGrid.insertAdjacentHTML(
+        "beforeend",
+        createTankHTML(config)
+    );
+
+});
+
+
+/* =========================================================
+   MQTT
+========================================================= */
 
 const clientID =
     "dashboard-master-" +
@@ -1165,324 +924,279 @@ const mqttOptions = {
     clientId:
         clientID,
 
-    clean:
-        true,
+    clean:true,
 
-    connectTimeout:
-        10000,
+    connectTimeout:10000,
 
-    reconnectPeriod:
-        3000
+    reconnectPeriod:3000
+
 };
 
 
 let client;
 
 
-/*
-============================================================
-DATA TANDON
-============================================================
-*/
+/* =========================================================
+   GRAFIK
+========================================================= */
 
-const tanks = {};
+const chartColors =
+    TANK_CONFIG.map(function(config){
+
+        return config.color;
+
+    });
 
 
-TANKS.forEach(
-    function(tank) {
+const chartDatasets =
+    TANK_CONFIG.map(function(config){
 
-        tanks[tank.id] = {
+        return {
 
-            online: false,
+            label:
+                config.name,
 
-            lastMessage: 0,
+            data:[],
 
-            persen: null,
+            borderColor:
+                config.color,
 
-            cm: null,
+            backgroundColor:
+                config.color,
 
-            pulse: null,
+            borderWidth:2,
 
-            rssi: null,
+            tension:.35,
 
-            ip: "--",
+            pointRadius:2,
 
-            waktu: "--",
-
-            history: []
+            fill:false
 
         };
 
-    }
-);
+    });
 
 
-/*
-============================================================
-GENERATE HTML TANDON
-============================================================
-*/
+const levelChart =
+    new Chart(
 
-function createTankCards() {
-
-    const container =
         document.getElementById(
-            "tankGrid"
-        );
+            "levelChart"
+        ),
 
+        {
 
-    container.innerHTML = "";
+            type:"line",
 
+            data:{
 
-    TANKS.forEach(
-        function(tank) {
+                labels:[],
 
-            const html = `
+                datasets:
+                    chartDatasets
 
-                <div class="tank-card">
+            },
 
-                    <div class="tank-header">
+            options:{
 
-                        <div>
+                responsive:true,
 
-                            <div class="tank-name">
+                maintainAspectRatio:false,
 
-                                💧
-                                ${tank.name}
+                animation:false,
 
-                            </div>
+                scales:{
 
-                            <div class="location">
+                    y:{
 
-                                ${tank.location}
+                        min:0,
 
-                            </div>
+                        max:100,
 
-                        </div>
+                        title:{
 
+                            display:true,
 
-                        <div
-                            id="status${tank.id}"
-                            class="device-status disconnected">
+                            text:
+                                "Level (%)",
 
-                            🔴 OFFLINE
+                            color:"#94a3b8"
 
-                        </div>
+                        },
 
-                    </div>
+                        ticks:{
 
+                            color:"#64748b"
 
-                    <div class="tank-main">
+                        },
 
-                        <div>
+                        grid:{
 
-                            <div
-                                id="percent${tank.id}"
-                                class="percent">
+                            color:
+                                "rgba(148,163,184,.10)"
 
-                                --%
+                        }
 
-                            </div>
+                    },
 
+                    x:{
 
-                            <div class="level-label">
+                        ticks:{
 
-                                LEVEL AIR
+                            color:"#64748b",
 
-                            </div>
+                            maxTicksLimit:12
 
+                        },
 
-                            <div
-                                id="levelStatus${tank.id}"
-                                class="level-status">
+                        grid:{
 
-                                Menunggu data...
+                            color:
+                                "rgba(148,163,184,.05)"
 
-                            </div>
+                        }
 
-                        </div>
+                    }
 
+                },
 
-                        <div class="tank-wrapper">
+                plugins:{
 
-                            <div class="tank">
+                    legend:{
 
-                                <div class="tank-top"></div>
+                        labels:{
 
-                                <div
-                                    id="water${tank.id}"
-                                    class="water">
+                            color:"#e2e8f0"
 
-                                </div>
+                        }
 
-                            </div>
+                    }
 
-                        </div>
+                }
 
-                    </div>
-
-
-                    <div class="data-grid">
-
-
-                        <div class="data-box">
-
-                            <div class="data-label">
-
-                                JARAK
-
-                            </div>
-
-                            <div
-                                id="cm${tank.id}"
-                                class="data-value">
-
-                                -- cm
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="data-box">
-
-                            <div class="data-label">
-
-                                PULSE
-
-                            </div>
-
-                            <div
-                                id="pulse${tank.id}"
-                                class="data-value">
-
-                                -- us
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="data-box">
-
-                            <div class="data-label">
-
-                                RSSI
-
-                            </div>
-
-                            <div
-                                id="rssi${tank.id}"
-                                class="data-value">
-
-                                -- dBm
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="data-box">
-
-                            <div class="data-label">
-
-                                WAKTU
-
-                            </div>
-
-                            <div
-                                id="time${tank.id}"
-                                class="data-value">
-
-                                --
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="data-box">
-
-                            <div class="data-label">
-
-                                IP ESP32
-
-                            </div>
-
-                            <div
-                                id="ip${tank.id}"
-                                class="data-value">
-
-                                --
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="data-box">
-
-                            <div class="data-label">
-
-                                DATA
-
-                            </div>
-
-                            <div
-                                id="data${tank.id}"
-                                class="data-value">
-
-                                Menunggu
-
-                            </div>
-
-                        </div>
-
-
-                    </div>
-
-                </div>
-
-            `;
-
-
-            container.insertAdjacentHTML(
-                "beforeend",
-                html
-            );
+            }
 
         }
+
     );
 
 
-    document
-        .getElementById(
-            "totalTank"
-        )
-        .innerText =
-        TANKS.length;
+/* =========================================================
+   UPDATE GRAFIK
+========================================================= */
+
+function addChartData(
+    id,
+    percent
+){
+
+    const now =
+        new Date();
 
 
-    document
-        .getElementById(
-            "onlineTank"
-        )
-        .innerText =
-        "0 / " +
-        TANKS.length;
+    const label =
+        now.toLocaleTimeString(
+            "id-ID",
+            {
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+
+
+    /*
+       Kalau timestamp sama,
+       jangan buat label baru.
+    */
+
+    if(
+        levelChart.data.labels.length === 0 ||
+        levelChart.data.labels[
+            levelChart.data.labels.length - 1
+        ] !== label
+    ){
+
+        levelChart.data.labels.push(
+            label
+        );
+
+        levelChart.data.datasets.forEach(
+            function(dataset){
+
+                dataset.data.push(null);
+
+            }
+        );
+
+    }
+
+
+    const dataset =
+        levelChart.data.datasets.find(
+            function(dataset){
+
+                return dataset.label ===
+                    TANK_CONFIG
+                        .find(
+                            function(config){
+                                return config.id === id;
+                            }
+                        )
+                        .name;
+
+            }
+        );
+
+
+    if(dataset){
+
+        dataset.data[
+            dataset.data.length - 1
+        ] = percent;
+
+    }
+
+
+    /*
+       Maksimal 24 jam.
+       Kita batasi 288 titik
+       jika data masuk tiap 5 menit.
+    */
+
+    const maxPoints = 288;
+
+
+    while(
+        levelChart.data.labels.length >
+        maxPoints
+    ){
+
+        levelChart.data.labels.shift();
+
+        levelChart.data.datasets.forEach(
+            function(dataset){
+
+                dataset.data.shift();
+
+            }
+        );
+
+    }
+
+
+    levelChart.update();
+
 }
 
 
-/*
-============================================================
-CONNECT MQTT
-============================================================
-*/
+/* =========================================================
+   CONNECT MQTT
+========================================================= */
 
-function connectMQTT() {
+function connectMQTT(){
 
     console.log(
-        "Connecting:",
+        "Connecting MQTT:",
         mqttURL
     );
 
@@ -1496,31 +1210,33 @@ function connectMQTT() {
 
     client.on(
         "connect",
-        function() {
+        function(){
 
             console.log(
                 "MQTT CONNECTED"
             );
 
 
-            setBrokerStatus(
-                true
-            );
+            setBrokerConnected();
 
 
-            TANKS.forEach(
-                function(tank) {
+            /*
+               Subscribe SEMUA tandon.
+            */
+
+            TANK_CONFIG.forEach(
+                function(config){
 
                     client.subscribe(
                         "tandon/" +
-                        tank.id +
+                        config.id +
                         "/data"
                     );
 
 
                     client.subscribe(
                         "tandon/" +
-                        tank.id +
+                        config.id +
                         "/status"
                     );
 
@@ -1533,7 +1249,10 @@ function connectMQTT() {
 
     client.on(
         "message",
-        function(topic, message) {
+        function(
+            topic,
+            message
+        ){
 
             const payload =
                 message.toString();
@@ -1556,16 +1275,14 @@ function connectMQTT() {
 
     client.on(
         "error",
-        function(error) {
+        function(error){
 
             console.error(
                 "MQTT ERROR:",
                 error
             );
 
-            setBrokerStatus(
-                false
-            );
+            setBrokerOffline();
 
         }
     );
@@ -1573,14 +1290,24 @@ function connectMQTT() {
 
     client.on(
         "close",
-        function() {
+        function(){
 
             console.log(
                 "MQTT CLOSED"
             );
 
-            setBrokerStatus(
-                false
+            setBrokerOffline();
+
+        }
+    );
+
+
+    client.on(
+        "reconnect",
+        function(){
+
+            console.log(
+                "MQTT RECONNECTING"
             );
 
         }
@@ -1589,16 +1316,22 @@ function connectMQTT() {
 }
 
 
-/*
-============================================================
-PROCESS MQTT
-============================================================
-*/
+/* =========================================================
+   PROCESS MQTT
+========================================================= */
 
 function processMQTT(
     topic,
     payload
-) {
+){
+
+    /*
+       Cari ID tandon dari topic.
+
+       Contoh:
+       tandon/3/data
+       tandon/5/status
+    */
 
     const match =
         topic.match(
@@ -1606,7 +1339,7 @@ function processMQTT(
         );
 
 
-    if(!match) {
+    if(!match){
 
         return;
 
@@ -1623,7 +1356,7 @@ function processMQTT(
         match[2];
 
 
-    if(!tanks[id]) {
+    if(!tanks[id]){
 
         return;
 
@@ -1631,17 +1364,21 @@ function processMQTT(
 
 
     /*
-    STATUS
+       STATUS
     */
 
-    if(type === "status") {
+    if(type === "status"){
+
+        const online =
+            payload.trim().toLowerCase()
+            === "online";
+
 
         updateStatus(
             id,
-            payload.trim()
-                .toLowerCase() ===
-                "online"
+            online
         );
+
 
         return;
 
@@ -1649,12 +1386,12 @@ function processMQTT(
 
 
     /*
-    DATA
+       DATA
     */
 
-    if(type === "data") {
+    if(type === "data"){
 
-        try {
+        try{
 
             const data =
                 JSON.parse(
@@ -1669,10 +1406,11 @@ function processMQTT(
 
         }
 
-        catch(error) {
+        catch(error){
 
             console.error(
-                "JSON error:",
+                "JSON ERROR Tandon " +
+                id,
                 error
             );
 
@@ -1683,20 +1421,14 @@ function processMQTT(
 }
 
 
-/*
-============================================================
-UPDATE TANK
-============================================================
-*/
+/* =========================================================
+   UPDATE TANK
+========================================================= */
 
 function updateTank(
     id,
     data
-) {
-
-    const state =
-        tanks[id];
-
+){
 
     const percent =
         Number(
@@ -1723,75 +1455,55 @@ function updateTank(
 
 
     /*
-    SIMPAN DATA
+       Simpan data
     */
 
-    state.persen =
-        Number.isFinite(percent)
-            ? percent
-            : null;
+    tanks[id].percent =
+        percent;
 
+    tanks[id].cm =
+        cm;
 
-    state.cm =
-        Number.isFinite(cm)
-            ? cm
-            : null;
+    tanks[id].pulse =
+        pulse;
 
+    tanks[id].rssi =
+        rssi;
 
-    state.pulse =
-        Number.isFinite(pulse)
-            ? pulse
-            : null;
+    tanks[id].ip =
+        data.ip || null;
 
+    tanks[id].waktu =
+        data.waktu || null;
 
-    state.rssi =
-        Number.isFinite(rssi)
-            ? rssi
-            : null;
-
-
-    state.ip =
-        data.ip ||
-        "--";
-
-
-    state.waktu =
-        data.waktu ||
-        new Date()
-            .toLocaleTimeString(
-                "id-ID"
-            );
-
-
-    state.lastMessage =
+    tanks[id].lastMessage =
         Date.now();
 
-
-    state.online =
+    tanks[id].online =
         true;
 
 
     /*
-    UPDATE LEVEL
+       PERCENT
     */
+
+    const percentElement =
+        document.getElementById(
+            "percent" + id
+        );
+
 
     if(
         Number.isFinite(percent)
-    ) {
+    ){
 
-        document
-            .getElementById(
-                "percent" + id
-            )
-            .innerText =
+        percentElement.innerText =
             percent + "%";
 
 
-        document
-            .getElementById(
-                "water" + id
-            )
-            .style.height =
+        document.getElementById(
+            "water" + id
+        ).style.height =
             Math.max(
                 0,
                 Math.min(
@@ -1800,110 +1512,81 @@ function updateTank(
                 )
             ) + "%";
 
-
-        updateLevelStyle(
-            id,
-            percent
-        );
-
     }
 
 
     /*
-    DISTANCE
+       CM
     */
 
-    if(
+    document.getElementById(
+        "cm" + id
+    ).innerText =
         Number.isFinite(cm)
-    ) {
-
-        document
-            .getElementById(
-                "cm" + id
-            )
-            .innerText =
-            cm.toFixed(1) +
-            " cm";
-
-    }
+            ? cm.toFixed(1) + " cm"
+            : "-- cm";
 
 
     /*
-    PULSE
+       PULSE
     */
 
-    if(
+    document.getElementById(
+        "pulse" + id
+    ).innerText =
         Number.isFinite(pulse)
-    ) {
-
-        document
-            .getElementById(
-                "pulse" + id
-            )
-            .innerText =
-            pulse +
-            " us";
-
-    }
+            ? pulse + " us"
+            : "-- us";
 
 
     /*
-    RSSI
+       RSSI
     */
 
-    if(
+    document.getElementById(
+        "rssi" + id
+    ).innerText =
         Number.isFinite(rssi)
-    ) {
+            ? rssi + " dBm"
+            : "-- dBm";
 
-        document
-            .getElementById(
-                "rssi" + id
-            )
-            .innerText =
-            rssi +
-            " dBm";
+
+    /*
+       WAKTU
+    */
+
+    document.getElementById(
+        "time" + id
+    ).innerText =
+        data.waktu || "--";
+
+
+    /*
+       IP
+    */
+
+    if(data.ip){
+
+        document.getElementById(
+            "ip" + id
+        ).innerText =
+            data.ip;
 
     }
 
 
     /*
-    TIME
+       DATA
     */
 
-    document
-        .getElementById(
-            "time" + id
-        )
-        .innerText =
-        state.waktu;
-
-
-    /*
-    IP
-    */
-
-    document
-        .getElementById(
-            "ip" + id
-        )
-        .innerText =
-        state.ip;
-
-
-    /*
-    DATA STATUS
-    */
-
-    document
-        .getElementById(
-            "data" + id
-        )
-        .innerText =
+    document.getElementById(
+        "data" + id
+    ).innerText =
         "Realtime";
 
 
     /*
-    ONLINE
+       STATUS ONLINE
     */
 
     updateStatus(
@@ -1913,76 +1596,87 @@ function updateTank(
 
 
     /*
-    SIMPAN HISTORI
+       LEVEL
     */
 
-    saveHistory(
+    updateLevelStatus(
         id,
         percent
     );
 
 
     /*
-    SUMMARY
+       SUMMARY
     */
 
     updateSummary();
 
 
-    document
-        .getElementById(
-            "lastUpdate"
-        )
-        .innerText =
+    /*
+       UPDATE TERAKHIR
+    */
+
+    document.getElementById(
+        "lastUpdate"
+    ).innerText =
         new Date()
             .toLocaleTimeString(
                 "id-ID"
             );
 
+
+    /*
+       GRAFIK
+    */
+
+    if(
+        Number.isFinite(percent)
+    ){
+
+        addChartData(
+            id,
+            percent
+        );
+
+    }
+
 }
 
 
-/*
-============================================================
-LEVEL STYLE
-============================================================
-*/
+/* =========================================================
+   LEVEL STATUS
+========================================================= */
 
-function updateLevelStyle(
+function updateLevelStatus(
     id,
     percent
-) {
+){
 
     const status =
-        document
-            .getElementById(
-                "levelStatus" + id
-            );
+        document.getElementById(
+            "levelStatus" + id
+        );
 
 
     const percentElement =
-        document
-            .getElementById(
-                "percent" + id
-            );
+        document.getElementById(
+            "percent" + id
+        );
 
 
     const water =
-        document
-            .getElementById(
-                "water" + id
-            );
+        document.getElementById(
+            "water" + id
+        );
 
 
-    if(percent < 20) {
+    if(percent < 20){
 
         status.innerText =
             "🔴 LEVEL RENDAH";
 
-
         status.style.color =
             "#f87171";
-
 
         status.style.background =
             "rgba(239,68,68,.15)";
@@ -1997,15 +1691,13 @@ function updateLevelStyle(
 
     }
 
-    else if(percent <= 50) {
+    else if(percent <= 50){
 
         status.innerText =
             "🟡 LEVEL SEDANG";
 
-
         status.style.color =
             "#facc15";
-
 
         status.style.background =
             "rgba(234,179,8,.15)";
@@ -2020,15 +1712,13 @@ function updateLevelStyle(
 
     }
 
-    else {
+    else{
 
         status.innerText =
             "🟢 LEVEL BAIK";
 
-
         status.style.color =
             "#4ade80";
-
 
         status.style.background =
             "rgba(34,197,94,.15)";
@@ -2046,27 +1736,38 @@ function updateLevelStyle(
 }
 
 
-/*
-============================================================
-UPDATE STATUS
-============================================================
-*/
+/* =========================================================
+   UPDATE STATUS
+========================================================= */
 
 function updateStatus(
     id,
     online
-) {
+){
 
     const element =
-        document
-            .getElementById(
-                "status" + id
-            );
+        document.getElementById(
+            "status" + id
+        );
 
 
-    if(!element) {
+    if(online){
 
-        return;
+        element.innerText =
+            "🟢 ONLINE";
+
+        element.className =
+            "device-status connected";
+
+    }
+
+    else{
+
+        element.innerText =
+            "🔴 OFFLINE";
+
+        element.className =
+            "device-status disconnected";
 
     }
 
@@ -2075,78 +1776,52 @@ function updateStatus(
         online;
 
 
-    if(online) {
-
-        element.innerText =
-            "🟢 ONLINE";
-
-
-        element.className =
-            "device-status connected";
-
-    }
-
-    else {
-
-        element.innerText =
-            "🔴 OFFLINE";
-
-
-        element.className =
-            "device-status disconnected";
-
-    }
-
-
     updateSummary();
 
 }
 
 
-/*
-============================================================
-SUMMARY
-============================================================
-*/
+/* =========================================================
+   SUMMARY
+========================================================= */
 
-function updateSummary() {
+function updateSummary(){
 
-    let online =
+    let onlineCount =
+        0;
+
+    let totalPercent =
+        0;
+
+    let percentCount =
         0;
 
 
-    let totalLevel =
-        0;
+    TANK_CONFIG.forEach(
+        function(config){
+
+            const tank =
+                tanks[config.id];
 
 
-    let levelCount =
-        0;
+            if(tank.online){
 
-
-    TANKS.forEach(
-        function(tank) {
-
-            const state =
-                tanks[tank.id];
-
-
-            if(state.online) {
-
-                online++;
+                onlineCount++;
 
             }
 
 
             if(
+                tank.percent !== null &&
                 Number.isFinite(
-                    state.persen
+                    tank.percent
                 )
-            ) {
+            ){
 
-                totalLevel +=
-                    state.persen;
+                totalPercent +=
+                    tank.percent;
 
-                levelCount++;
+                percentCount++;
 
             }
 
@@ -2154,40 +1829,34 @@ function updateSummary() {
     );
 
 
-    document
-        .getElementById(
-            "onlineTank"
-        )
-        .innerText =
-        online +
+    document.getElementById(
+        "onlineTank"
+    ).innerText =
+        onlineCount +
         " / " +
-        TANKS.length;
+        TANK_CONFIG.length;
 
 
-    if(levelCount > 0) {
+    if(percentCount > 0){
 
         const average =
-            totalLevel /
-            levelCount;
+            totalPercent /
+            percentCount;
 
 
-        document
-            .getElementById(
-                "averageLevel"
-            )
-            .innerText =
+        document.getElementById(
+            "averageLevel"
+        ).innerText =
             average.toFixed(1) +
             " %";
 
     }
 
-    else {
+    else{
 
-        document
-            .getElementById(
-                "averageLevel"
-            )
-            .innerText =
+        document.getElementById(
+            "averageLevel"
+        ).innerText =
             "-- %";
 
     }
@@ -2195,687 +1864,82 @@ function updateSummary() {
 }
 
 
-/*
-============================================================
-BROKER STATUS
-============================================================
-*/
+/* =========================================================
+   BROKER CONNECTED
+========================================================= */
 
-function setBrokerStatus(
-    online
-) {
+function setBrokerConnected(){
 
     const element =
-        document
-            .getElementById(
-                "brokerStatus"
-            );
+        document.getElementById(
+            "brokerStatus"
+        );
 
 
-    if(online) {
-
-        element.innerText =
-            "🟢 MQTT CONNECTED";
+    element.innerText =
+        "🟢 MQTT CONNECTED";
 
 
-        element.className =
-            "broker-status connected";
-
-    }
-
-    else {
-
-        element.innerText =
-            "🔴 MQTT OFFLINE";
-
-
-        element.className =
-            "broker-status disconnected";
-
-    }
+    element.className =
+        "broker-status connected";
 
 }
 
 
-/*
-============================================================
-HISTORY
-============================================================
-*/
+/* =========================================================
+   BROKER OFFLINE
+========================================================= */
 
-function saveHistory(
-    id,
-    percent
-) {
+function setBrokerOffline(){
 
-    if(
-        !Number.isFinite(
-            percent
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    const now =
-        Date.now();
-
-
-    const state =
-        tanks[id];
-
-
-    state.history.push({
-
-        time:
-            now,
-
-        persen:
-            percent
-
-    });
-
-
-    /*
-    HAPUS DATA LEBIH DARI 24 JAM
-    */
-
-    const limit =
-        now -
-        (
-            HISTORY_HOURS *
-            60 *
-            60 *
-            1000
+    const element =
+        document.getElementById(
+            "brokerStatus"
         );
 
 
-    state.history =
-        state.history.filter(
-            function(item) {
-
-                return item.time >= limit;
-
-            }
-        );
+    element.innerText =
+        "🔴 MQTT OFFLINE";
 
 
-    /*
-    BATASI JUMLAH DATA
-    */
-
-    if(
-        state.history.length >
-        MAX_HISTORY
-    ) {
-
-        state.history =
-            state.history.slice(
-                -MAX_HISTORY
-            );
-
-    }
-
-
-    /*
-    UPDATE HISTORY TABLE
-    */
-
-    addHistoryRow(
-        id,
-        percent
-    );
-
-
-    /*
-    DRAW GRAPH
-    */
-
-    drawChart();
+    element.className =
+        "broker-status disconnected";
 
 }
 
 
-/*
-============================================================
-HISTORY TABLE
-============================================================
-*/
+/* =========================================================
+   CEK OFFLINE
+=========================================================
 
-function addHistoryRow(
-    id,
-    percent
-) {
+   Kalau tidak ada DATA selama 30 detik,
+   perangkat dianggap offline.
 
-    const body =
-        document
-            .getElementById(
-                "historyBody"
-            );
-
-
-    const tank =
-        TANKS.find(
-            function(item) {
-
-                return item.id === id;
-
-            }
-        );
-
-
-    const state =
-        tanks[id];
-
-
-    const row =
-        document.createElement(
-            "tr"
-        );
-
-
-    row.innerHTML = `
-
-        <td>
-            ${new Date()
-                .toLocaleTimeString(
-                    "id-ID"
-                )}
-        </td>
-
-        <td>
-            ${tank.name}
-        </td>
-
-        <td>
-            ${percent.toFixed(1)} %
-        </td>
-
-        <td>
-            ${
-                Number.isFinite(state.cm)
-                ? state.cm.toFixed(1) + " cm"
-                : "--"
-            }
-        </td>
-
-        <td>
-            ${
-                Number.isFinite(state.rssi)
-                ? state.rssi + " dBm"
-                : "--"
-            }
-        </td>
-
-        <td>
-            ${state.ip}
-        </td>
-
-    `;
-
-
-    body.prepend(
-        row
-    );
-
-
-    /*
-    HANYA SIMPAN 50 BARIS
-    */
-
-    while(
-        body.children.length >
-        50
-    ) {
-
-        body.removeChild(
-            body.lastChild
-        );
-
-    }
-
-}
-
-
-/*
-============================================================
-CANVAS GRAPH
-============================================================
-*/
-
-function drawChart() {
-
-    const canvas =
-        document
-            .getElementById(
-                "levelChart"
-            );
-
-
-    if(!canvas) {
-
-        return;
-
-    }
-
-
-    const ctx =
-        canvas.getContext(
-            "2d"
-        );
-
-
-    const width =
-        canvas.width;
-
-
-    const height =
-        canvas.height;
-
-
-    /*
-    CLEAR
-    */
-
-    ctx.clearRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-
-    /*
-    BACKGROUND
-    */
-
-    ctx.fillStyle =
-        "rgba(2,6,23,.35)";
-
-
-    ctx.fillRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-
-    /*
-    MARGIN
-    */
-
-    const left =
-        55;
-
-
-    const right =
-        20;
-
-
-    const top =
-        25;
-
-
-    const bottom =
-        40;
-
-
-    const graphWidth =
-        width -
-        left -
-        right;
-
-
-    const graphHeight =
-        height -
-        top -
-        bottom;
-
-
-    /*
-    GRID
-    */
-
-    ctx.strokeStyle =
-        "rgba(148,163,184,.10)";
-
-
-    ctx.lineWidth =
-        1;
-
-
-    ctx.font =
-        "11px Segoe UI";
-
-
-    ctx.fillStyle =
-        "#64748b";
-
-
-    for(
-        let p = 0;
-        p <= 100;
-        p += 20
-    ) {
-
-        const y =
-            top +
-            graphHeight -
-            (
-                p / 100
-            ) *
-            graphHeight;
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            left,
-            y
-        );
-
-        ctx.lineTo(
-            width - right,
-            y
-        );
-
-        ctx.stroke();
-
-
-        ctx.fillText(
-            p + "%",
-            10,
-            y + 4
-        );
-
-    }
-
-
-    /*
-    TIME LINE
-    */
-
-    const now =
-        Date.now();
-
-
-    const start =
-        now -
-        (
-            HISTORY_HOURS *
-            60 *
-            60 *
-            1000
-        );
-
-
-    for(
-        let h = 0;
-        h <= 24;
-        h += 4
-    ) {
-
-        const x =
-            left +
-            (
-                h / 24
-            ) *
-            graphWidth;
-
-
-        ctx.strokeStyle =
-            "rgba(148,163,184,.07)";
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x,
-            top
-        );
-
-        ctx.lineTo(
-            x,
-            height - bottom
-        );
-
-        ctx.stroke();
-
-
-        const time =
-            new Date(
-                start +
-                h *
-                60 *
-                60 *
-                1000
-            );
-
-
-        ctx.fillStyle =
-            "#64748b";
-
-
-        ctx.fillText(
-            time.toLocaleTimeString(
-                "id-ID",
-                {
-                    hour:
-                        "2-digit",
-                    minute:
-                        "2-digit"
-                }
-            ),
-            x - 18,
-            height - 15
-        );
-
-    }
-
-
-    /*
-    COLORS
-    */
-
-    const colors = [
-
-        "#38bdf8",
-        "#4ade80",
-        "#facc15",
-        "#fb7185",
-        "#a78bfa",
-        "#fb923c"
-
-    ];
-
-
-    /*
-    DRAW EACH TANK
-    */
-
-    TANKS.forEach(
-        function(tank, tankIndex) {
-
-            const history =
-                tanks[tank.id]
-                    .history;
-
-
-            if(
-                history.length === 0
-            ) {
-
-                return;
-
-            }
-
-
-            ctx.strokeStyle =
-                colors[
-                    tankIndex %
-                    colors.length
-                ];
-
-
-            ctx.lineWidth =
-                2;
-
-
-            ctx.beginPath();
-
-
-            let started =
-                false;
-
-
-            history.forEach(
-                function(item) {
-
-                    if(
-                        item.time < start
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    const x =
-                        left +
-                        (
-                            (
-                                item.time -
-                                start
-                            ) /
-                            (
-                                now -
-                                start
-                            )
-                        ) *
-                        graphWidth;
-
-
-                    const y =
-                        top +
-                        graphHeight -
-                        (
-                            item.persen /
-                            100
-                        ) *
-                        graphHeight;
-
-
-                    if(!started) {
-
-                        ctx.moveTo(
-                            x,
-                            y
-                        );
-
-                        started =
-                            true;
-
-                    }
-
-                    else {
-
-                        ctx.lineTo(
-                            x,
-                            y
-                        );
-
-                    }
-
-                }
-            );
-
-
-            if(started) {
-
-                ctx.stroke();
-
-            }
-
-
-            /*
-            LEGEND
-            */
-
-            const legendX =
-                left +
-                tankIndex *
-                150;
-
-
-            ctx.fillStyle =
-                colors[
-                    tankIndex %
-                    colors.length
-                ];
-
-
-            ctx.fillRect(
-                legendX,
-                5,
-                10,
-                10
-            );
-
-
-            ctx.fillStyle =
-                "#94a3b8";
-
-
-            ctx.font =
-                "10px Segoe UI";
-
-
-            ctx.fillText(
-                tank.name,
-                legendX + 15,
-                14
-            );
-
-        }
-    );
-
-}
-
-
-/*
-============================================================
-OFFLINE CHECK
-============================================================
 */
 
 setInterval(
-    function() {
+    function(){
 
         const now =
             Date.now();
 
 
-        TANKS.forEach(
-            function(tank) {
+        TANK_CONFIG.forEach(
+            function(config){
 
-                const state =
-                    tanks[tank.id];
+                const tank =
+                    tanks[config.id];
 
 
                 if(
-                    state.lastMessage > 0 &&
-                    (
-                        now -
-                        state.lastMessage
-                    ) >
+                    tank.lastMessage > 0 &&
+                    now -
+                    tank.lastMessage >
                     OFFLINE_TIMEOUT
-                ) {
+                ){
 
                     updateStatus(
-                        tank.id,
+                        config.id,
                         false
                     );
 
@@ -2889,67 +1953,11 @@ setInterval(
 );
 
 
-/*
-============================================================
-RESPONSIVE CANVAS
-============================================================
-*/
+/* =========================================================
+   START
+========================================================= */
 
-function resizeCanvas() {
-
-    const canvas =
-        document
-            .getElementById(
-                "levelChart"
-            );
-
-
-    if(!canvas) {
-
-        return;
-
-    }
-
-
-    const box =
-        canvas.parentElement;
-
-
-    const width =
-        Math.max(
-            700,
-            box.clientWidth
-        );
-
-
-    canvas.width =
-        width;
-
-
-    canvas.height =
-        300;
-
-
-    drawChart();
-
-}
-
-
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
-
-
-/*
-============================================================
-START
-============================================================
-*/
-
-createTankCards();
-
-resizeCanvas();
+updateSummary();
 
 connectMQTT();
 
