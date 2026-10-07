@@ -6,11 +6,9 @@
 
 <title>Dashboard Master Tandon</title>
 
-<!-- MQTT.js -->
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
 <style>
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -18,364 +16,253 @@
 }
 
 body {
-    font-family:
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
+    font-family: "Segoe UI", Arial, sans-serif;
     min-height: 100vh;
-
-    padding: 20px;
-
+    padding: 12px;
     color: #e2e8f0;
 
     background:
-        radial-gradient(
-            circle at top,
-            #172554 0%,
-            #0f172a 40%,
-            #020617 100%
-        );
+        radial-gradient(circle at top,
+        #172554 0%,
+        #0f172a 40%,
+        #020617 100%);
 }
 
 .container {
+    width: 100%;
     max-width: 1200px;
     margin: auto;
 }
 
-
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    margin-bottom: 20px;
-
-    gap: 15px;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
 .title-area {
     display: flex;
     align-items: center;
-    gap: 13px;
+    gap: 12px;
 }
 
 .logo {
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 15px;
-
-    font-size: 27px;
+    border-radius: 14px;
+    font-size: 25px;
 
     background:
-        linear-gradient(
-            135deg,
-            #38bdf8,
-            #2563eb
-        );
+        linear-gradient(135deg,#38bdf8,#2563eb);
 }
 
 .title {
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 900;
-
     color: #f8fafc;
 }
 
 .subtitle {
     margin-top: 3px;
-
-    font-size: 12px;
-
+    font-size: 11px;
     color: #94a3b8;
 }
 
 .broker-status {
-    padding: 9px 15px;
-
+    padding: 8px 13px;
     border-radius: 20px;
-
-    font-size: 12px;
-
+    font-size: 11px;
     font-weight: 800;
+    white-space: nowrap;
 }
 
 .connected {
     color: #4ade80;
-
-    background:
-        rgba(34,197,94,.14);
+    background: rgba(34,197,94,.14);
 }
 
 .disconnected {
     color: #f87171;
-
-    background:
-        rgba(239,68,68,.14);
+    background: rgba(239,68,68,.14);
 }
 
-
-/* =========================
-   SUMMARY
-========================= */
+/* SUMMARY */
 
 .summary {
     display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 15px;
-
-    margin-bottom: 20px;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
 .summary-card {
-    padding: 18px;
+    padding: 16px;
+    border-radius: 17px;
 
-    border-radius: 18px;
-
-    background:
-        rgba(15,23,42,.85);
-
-    border:
-        1px solid
-        rgba(148,163,184,.12);
+    background: rgba(15,23,42,.88);
+    border: 1px solid rgba(148,163,184,.12);
 }
 
 .summary-label {
-    font-size: 11px;
-
+    font-size: 10px;
     color: #64748b;
-
     margin-bottom: 6px;
 }
 
 .summary-value {
-    font-size: 25px;
-
+    font-size: 23px;
     font-weight: 900;
-
     color: #f8fafc;
 }
 
-
-/* =========================
-   TANK GRID
-========================= */
+/* TANK GRID */
 
 .tank-grid {
     display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 20px;
+    grid-template-columns: repeat(2,1fr);
+    gap: 18px;
 }
 
-
-/* =========================
-   TANK CARD
-========================= */
+/* TANK CARD */
 
 .tank-card {
-    padding: 22px;
+    padding: 20px;
+    border-radius: 22px;
 
-    border-radius: 23px;
-
-    background:
-        rgba(15,23,42,.90);
-
-    border:
-        1px solid
-        rgba(148,163,184,.12);
+    background: rgba(15,23,42,.92);
+    border: 1px solid rgba(148,163,184,.12);
 
     box-shadow:
-        0 18px 45px
-        rgba(0,0,0,.25);
+        0 18px 45px rgba(0,0,0,.25);
 }
 
 .tank-header {
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .tank-name {
     font-size: 19px;
-
     font-weight: 900;
 }
 
 .location {
-    margin-top: 4px;
-
+    margin-top: 3px;
     font-size: 11px;
-
     color: #64748b;
 }
 
 .device-status {
-    padding: 6px 10px;
-
+    padding: 6px 9px;
     border-radius: 15px;
-
     font-size: 10px;
-
     font-weight: 800;
 }
 
-
-/* =========================
-   MAIN TANK
-========================= */
+/* MAIN TANK */
 
 .tank-main {
     display: grid;
-
-    grid-template-columns:
-        1fr 170px;
-
+    grid-template-columns: 1fr 160px;
     align-items: center;
-
-    gap: 15px;
+    gap: 10px;
 }
 
 .percent {
-    font-size: 65px;
-
+    font-size: 62px;
     line-height: 1;
-
     font-weight: 900;
-
     color: #38bdf8;
 }
 
 .level-label {
     margin-top: 6px;
-
-    font-size: 12px;
-
+    font-size: 11px;
     color: #94a3b8;
 }
 
 .level-status {
     display: inline-block;
-
-    margin-top: 13px;
-
-    padding: 7px 13px;
-
+    margin-top: 12px;
+    padding: 7px 12px;
     border-radius: 18px;
-
-    font-size: 11px;
-
+    font-size: 10px;
     font-weight: 800;
 }
 
-
-/* =========================
-   TANK VISUAL
-========================= */
+/* TANK VISUAL */
 
 .tank-wrapper {
     display: flex;
-
     justify-content: center;
 }
 
 .tank {
-    width: 125px;
-
-    height: 210px;
+    width: 115px;
+    height: 195px;
 
     position: relative;
-
     overflow: hidden;
 
-    border:
-        5px solid
-        #475569;
-
-    border-radius:
-        17px 17px 25px 25px;
+    border: 5px solid #475569;
+    border-radius: 17px 17px 25px 25px;
 
     background:
-        linear-gradient(
-            180deg,
-            #1e293b,
-            #0f172a
-        );
+        linear-gradient(180deg,
+        #1e293b,
+        #0f172a);
 }
 
 .tank-top {
     position: absolute;
-
     top: -13px;
-
     left: 12%;
 
     width: 76%;
-
     height: 25px;
 
-    border:
-        5px solid
-        #64748b;
-
+    border: 5px solid #64748b;
     border-radius: 50%;
 
     background: #1e293b;
-
     z-index: 5;
 }
 
 .water {
     position: absolute;
-
     left: 0;
-
     bottom: 0;
 
     width: 100%;
-
     height: 0%;
 
-    transition:
-        height .8s ease;
+    transition: height .8s ease;
 
     background:
-        linear-gradient(
-            180deg,
-            #38bdf8,
-            #2563eb
-        );
+        linear-gradient(180deg,
+        #38bdf8,
+        #2563eb);
 }
 
 .water::before {
     content: "";
 
     position: absolute;
-
     top: -9px;
-
     left: -10%;
 
     width: 120%;
-
     height: 18px;
 
     border-radius: 50%;
@@ -384,121 +271,202 @@ body {
         rgba(125,211,252,.85);
 }
 
-
-/* =========================
-   DATA
-========================= */
+/* DATA */
 
 .data-grid {
     display: grid;
+    grid-template-columns: repeat(3,1fr);
 
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap: 9px;
-
-    margin-top: 22px;
+    gap: 8px;
+    margin-top: 20px;
 }
 
 .data-box {
-    padding: 12px;
+    padding: 11px;
+    border-radius: 12px;
 
-    border-radius: 13px;
-
-    background:
-        rgba(30,41,59,.75);
+    background: rgba(30,41,59,.75);
 }
 
 .data-label {
-    font-size: 10px;
-
+    font-size: 9px;
     color: #64748b;
 }
 
 .data-value {
     margin-top: 5px;
-
-    font-size: 15px;
-
+    font-size: 14px;
     font-weight: 800;
-
     color: #f8fafc;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+/* HOURLY SECTION */
 
-/* =========================
-   FOOTER
-========================= */
+.hourly-section {
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border-radius: 22px;
+
+    background: rgba(15,23,42,.92);
+    border: 1px solid rgba(148,163,184,.12);
+}
+
+.hourly-title {
+    font-size: 19px;
+    font-weight: 900;
+    margin-bottom: 5px;
+}
+
+.hourly-subtitle {
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.hourly-table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+}
+
+.hourly-table th {
+    padding: 11px 8px;
+    text-align: center;
+
+    font-size: 10px;
+    color: #94a3b8;
+
+    background: rgba(30,41,59,.8);
+}
+
+.hourly-table td {
+    padding: 10px 8px;
+    text-align: center;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    border-bottom:
+        1px solid
+        rgba(148,163,184,.08);
+}
+
+.hour-good {
+    color: #4ade80;
+}
+
+.hour-medium {
+    color: #facc15;
+}
+
+.hour-low {
+    color: #fb7185;
+}
+
+.no-data {
+    color: #64748b;
+    text-align: center;
+    padding: 18px !important;
+}
+
+/* FOOTER */
 
 .footer {
     text-align: center;
-
-    margin-top: 25px;
+    margin: 20px 0 8px;
 
     color: #475569;
-
-    font-size: 11px;
+    font-size: 10px;
 }
 
-
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media(max-width:800px) {
 
     .summary {
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
     }
 
     .tank-grid {
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
+    }
+
+    .tank-main {
+        grid-template-columns: 1fr 140px;
     }
 }
 
 @media(max-width:550px) {
 
     body {
-        padding: 10px;
+        padding: 8px;
     }
 
     .header {
         align-items: flex-start;
     }
 
+    .logo {
+        width: 42px;
+        height: 42px;
+        font-size: 22px;
+    }
+
     .title {
-        font-size: 19px;
+        font-size: 18px;
+    }
+
+    .subtitle {
+        font-size: 9px;
+    }
+
+    .broker-status {
+        font-size: 9px;
+        padding: 7px 9px;
+    }
+
+    .tank-card {
+        padding: 16px;
     }
 
     .tank-main {
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
     }
 
     .tank-wrapper {
         order: -1;
-    }
-
-    .data-grid {
-        grid-template-columns:
-            1fr 1fr;
+        margin-bottom: 10px;
     }
 
     .percent {
-        font-size: 52px;
+        font-size: 50px;
+    }
+
+    .data-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .tank {
+        width: 105px;
+        height: 175px;
     }
 }
-
 </style>
 </head>
-
 
 <body>
 
 <div class="container">
-
 
 <!-- HEADER -->
 
@@ -517,13 +485,12 @@ body {
             </div>
 
             <div class="subtitle">
-                Monitoring 2 Lokasi • ESP32 • A0120AM • HiveMQ Cloud
+                Monitoring Office & Mesjid • ESP32 • HiveMQ Cloud
             </div>
 
         </div>
 
     </div>
-
 
     <div
         id="brokerStatus"
@@ -598,7 +565,7 @@ body {
 <div class="tank-grid">
 
 
-<!-- TANDON 1 -->
+<!-- TANDON OFFICE -->
 
 <div class="tank-card">
 
@@ -607,15 +574,14 @@ body {
         <div>
 
             <div class="tank-name">
-                💧 Tandon 1
+                💧 Tandon Office
             </div>
 
             <div class="location">
-                Lokasi office
+                Lokasi Office
             </div>
 
         </div>
-
 
         <div
             id="status1"
@@ -644,7 +610,6 @@ body {
                 LEVEL AIR
             </div>
 
-
             <div
                 id="levelStatus1"
                 class="level-status">
@@ -665,7 +630,6 @@ body {
                 <div
                     id="water1"
                     class="water">
-
                 </div>
 
             </div>
@@ -678,104 +642,33 @@ body {
     <div class="data-grid">
 
         <div class="data-box">
-
-            <div class="data-label">
-                JARAK
-            </div>
-
-            <div
-                id="cm1"
-                class="data-value">
-
-                -- cm
-
-            </div>
-
+            <div class="data-label">JARAK</div>
+            <div id="cm1" class="data-value">-- cm</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                PULSE
-            </div>
-
-            <div
-                id="pulse1"
-                class="data-value">
-
-                -- us
-
-            </div>
-
+            <div class="data-label">PULSE</div>
+            <div id="pulse1" class="data-value">-- us</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                RSSI
-            </div>
-
-            <div
-                id="rssi1"
-                class="data-value">
-
-                -- dBm
-
-            </div>
-
+            <div class="data-label">RSSI</div>
+            <div id="rssi1" class="data-value">-- dBm</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                WAKTU
-            </div>
-
-            <div
-                id="time1"
-                class="data-value">
-
-                --
-
-            </div>
-
+            <div class="data-label">WAKTU</div>
+            <div id="time1" class="data-value">--</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                IP ESP32
-            </div>
-
-            <div
-                id="ip1"
-                class="data-value">
-
-                --
-
-            </div>
-
+            <div class="data-label">IP ESP32</div>
+            <div id="ip1" class="data-value">--</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                DATA
-            </div>
-
-            <div
-                id="data1"
-                class="data-value">
-
-                Menunggu
-
-            </div>
-
+            <div class="data-label">DATA</div>
+            <div id="data1" class="data-value">Menunggu</div>
         </div>
 
     </div>
@@ -783,7 +676,7 @@ body {
 </div>
 
 
-<!-- TANDON 2 -->
+<!-- TANDON MESJID -->
 
 <div class="tank-card">
 
@@ -792,15 +685,14 @@ body {
         <div>
 
             <div class="tank-name">
-                💧 Tandon 2
+                🕌 Tandon Mesjid
             </div>
 
             <div class="location">
-                Lokasi mesjid
+                Lokasi Mesjid
             </div>
 
         </div>
-
 
         <div
             id="status2"
@@ -829,7 +721,6 @@ body {
                 LEVEL AIR
             </div>
 
-
             <div
                 id="levelStatus2"
                 class="level-status">
@@ -850,7 +741,6 @@ body {
                 <div
                     id="water2"
                     class="water">
-
                 </div>
 
             </div>
@@ -863,104 +753,33 @@ body {
     <div class="data-grid">
 
         <div class="data-box">
-
-            <div class="data-label">
-                JARAK
-            </div>
-
-            <div
-                id="cm2"
-                class="data-value">
-
-                -- cm
-
-            </div>
-
+            <div class="data-label">JARAK</div>
+            <div id="cm2" class="data-value">-- cm</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                PULSE
-            </div>
-
-            <div
-                id="pulse2"
-                class="data-value">
-
-                -- us
-
-            </div>
-
+            <div class="data-label">PULSE</div>
+            <div id="pulse2" class="data-value">-- us</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                RSSI
-            </div>
-
-            <div
-                id="rssi2"
-                class="data-value">
-
-                -- dBm
-
-            </div>
-
+            <div class="data-label">RSSI</div>
+            <div id="rssi2" class="data-value">-- dBm</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                WAKTU
-            </div>
-
-            <div
-                id="time2"
-                class="data-value">
-
-                --
-
-            </div>
-
+            <div class="data-label">WAKTU</div>
+            <div id="time2" class="data-value">--</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                IP ESP32
-            </div>
-
-            <div
-                id="ip2"
-                class="data-value">
-
-                --
-
-            </div>
-
+            <div class="data-label">IP ESP32</div>
+            <div id="ip2" class="data-value">--</div>
         </div>
 
-
         <div class="data-box">
-
-            <div class="data-label">
-                DATA
-            </div>
-
-            <div
-                id="data2"
-                class="data-value">
-
-                Menunggu
-
-            </div>
-
+            <div class="data-label">DATA</div>
+            <div id="data2" class="data-value">Menunggu</div>
         </div>
 
     </div>
@@ -970,10 +789,53 @@ body {
 </div>
 
 
+<!-- MONITORING PER JAM -->
+
+<div class="hourly-section">
+
+    <div class="hourly-title">
+        📊 Monitoring Per Jam
+    </div>
+
+    <div class="hourly-subtitle">
+        Rata-rata level air berdasarkan data yang diterima browser
+    </div>
+
+    <div class="table-wrapper">
+
+        <table class="hourly-table">
+
+            <thead>
+
+                <tr>
+                    <th>JAM</th>
+                    <th>OFFICE</th>
+                    <th>MESJID</th>
+                    <th>DATA OFFICE</th>
+                    <th>DATA MESJID</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="hourlyBody">
+
+                <tr>
+                    <td colspan="5" class="no-data">
+                        Belum ada data monitoring
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
 <div class="footer">
-
     ESP32 Multi Tandon Monitoring • MQTT HiveMQ Cloud
-
 </div>
 
 </div>
@@ -985,52 +847,25 @@ body {
 ============================================================
 KONFIGURASI HIVEMQ
 ============================================================
-
-HOST:
-a1cd69b564c54fb2a27c2ad31940a4d2.s1.eu.hivemq.cloud
-
-PORT MQTT:
-8883
-
-PORT WEBSOCKET:
-8884
-
-Untuk browser kita menggunakan WSS / Secure WebSocket.
-HiveMQ Cloud menyediakan koneksi MQTT over WebSocket
-untuk client web.
 */
-
 
 const MQTT_HOST =
     "a1cd69b564c54fb2a27c2ad31940a4d2.s1.eu.hivemq.cloud";
-
 
 const MQTT_PORT = 8884;
 
 
 /*
 ============================================================
-CREDENTIAL DASHBOARD
+LOGIN DASHBOARD MQTT
 ============================================================
 
-BUAT USER MQTT KHUSUS DASHBOARD DI HIVEMQ.
-
-Jangan gunakan credential ESP32 untuk produksi.
-
-Contoh:
-
-username:
-dashboard
-
-password:
-PASSWORD_DASHBOARD
-
-GANTI DI BAWAH.
+GANTI PASSWORD DI BAWAH DENGAN PASSWORD DASHBOARD
+YANG SEKARANG SUDAH OM BUAT.
 */
 
 const MQTT_USERNAME =
     "dashboard";
-
 
 const MQTT_PASSWORD =
     "12345678";
@@ -1038,7 +873,7 @@ const MQTT_PASSWORD =
 
 /*
 ============================================================
-MQTT CLIENT
+MQTT
 ============================================================
 */
 
@@ -1048,14 +883,12 @@ const clientID =
         .toString(16)
         .substring(2);
 
-
 const mqttURL =
     "wss://" +
     MQTT_HOST +
     ":" +
     MQTT_PORT +
     "/mqtt";
-
 
 const options = {
 
@@ -1076,16 +909,14 @@ const options = {
 
     reconnectPeriod:
         3000
-
 };
-
 
 let client;
 
 
 /*
 ============================================================
-DATA
+STATUS TANDON
 ============================================================
 */
 
@@ -1106,14 +937,317 @@ const tanks = {
 
 /*
 ============================================================
-CONNECT
+DATA PER JAM
+============================================================
+
+Contoh:
+
+15:00
+Office = 75%
+Mesjid = 82%
+
+16:00
+Office = 73%
+Mesjid = 80%
+
+Data disimpan di browser.
+*/
+
+const hourlyData = {};
+
+
+/*
+============================================================
+FORMAT JAM
+============================================================
+*/
+
+function getHourKey() {
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2,"0");
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(2,"0");
+
+    const hour =
+        String(
+            now.getHours()
+        ).padStart(2,"0");
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day +
+        " " +
+        hour +
+        ":00"
+    );
+}
+
+
+/*
+============================================================
+SIMPAN DATA PER JAM
+============================================================
+*/
+
+function saveHourlyData(
+    id,
+    percent
+) {
+
+    if(
+        !Number.isFinite(percent)
+    ) {
+        return;
+    }
+
+    const hour =
+        getHourKey();
+
+
+    if(
+        !hourlyData[hour]
+    ) {
+
+        hourlyData[hour] = {
+
+            1: [],
+            2: []
+
+        };
+
+    }
+
+
+    hourlyData[hour][id]
+        .push(percent);
+
+
+    /*
+    Simpan maksimal 500 data jam
+    agar browser tidak terlalu berat.
+    */
+
+    const keys =
+        Object.keys(
+            hourlyData
+        );
+
+    if(
+        keys.length > 500
+    ) {
+
+        delete hourlyData[
+            keys[0]
+        ];
+
+    }
+
+
+    renderHourlyData();
+
+}
+
+
+/*
+============================================================
+RATA-RATA
+============================================================
+*/
+
+function average(arr) {
+
+    if(
+        !arr ||
+        arr.length === 0
+    ) {
+
+        return null;
+
+    }
+
+    const total =
+        arr.reduce(
+            (sum,value) =>
+                sum + value,
+            0
+        );
+
+    return total / arr.length;
+}
+
+
+/*
+============================================================
+CLASS LEVEL
+============================================================
+*/
+
+function levelClass(percent) {
+
+    if(
+        percent === null
+    ) {
+
+        return "";
+
+    }
+
+    if(
+        percent < 20
+    ) {
+
+        return "hour-low";
+
+    }
+
+    if(
+        percent <= 50
+    ) {
+
+        return "hour-medium";
+
+    }
+
+    return "hour-good";
+}
+
+
+/*
+============================================================
+RENDER MONITORING PER JAM
+============================================================
+*/
+
+function renderHourlyData() {
+
+    const body =
+        document.getElementById(
+            "hourlyBody"
+        );
+
+
+    const keys =
+        Object.keys(
+            hourlyData
+        ).sort(
+            (a,b) =>
+                b.localeCompare(a)
+        );
+
+
+    if(
+        keys.length === 0
+    ) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="5" class="no-data">
+                    Belum ada data monitoring
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+    Tampilkan maksimal 24 jam terakhir
+    */
+
+    const displayKeys =
+        keys.slice(0,24);
+
+
+    body.innerHTML =
+        displayKeys.map(
+            hour => {
+
+                const office =
+                    average(
+                        hourlyData[hour][1]
+                    );
+
+                const mesjid =
+                    average(
+                        hourlyData[hour][2]
+                    );
+
+
+                const officeText =
+                    office === null
+                    ? "--"
+                    : office.toFixed(1) + "%";
+
+
+                const mesjidText =
+                    mesjid === null
+                    ? "--"
+                    : mesjid.toFixed(1) + "%";
+
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${hour}
+                        </td>
+
+                        <td class="${levelClass(office)}">
+                            ${officeText}
+                        </td>
+
+                        <td class="${levelClass(mesjid)}">
+                            ${mesjidText}
+                        </td>
+
+                        <td>
+                            ${
+                                hourlyData[hour][1].length
+                            }
+                        </td>
+
+                        <td>
+                            ${
+                                hourlyData[hour][2].length
+                            }
+                        </td>
+
+                    </tr>
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/*
+============================================================
+CONNECT MQTT
 ============================================================
 */
 
 function connectMQTT() {
 
     console.log(
-        "Connecting:",
+        "Connecting MQTT:",
         mqttURL
     );
 
@@ -1150,12 +1284,6 @@ function connectMQTT() {
                 "broker-status connected";
 
 
-            /*
-            ============================
-            SUBSCRIBE TANDON 1
-            ============================
-            */
-
             client.subscribe(
                 "tandon/1/data"
             );
@@ -1165,12 +1293,6 @@ function connectMQTT() {
                 "tandon/1/status"
             );
 
-
-            /*
-            ============================
-            SUBSCRIBE TANDON 2
-            ============================
-            */
 
             client.subscribe(
                 "tandon/2/data"
@@ -1187,7 +1309,10 @@ function connectMQTT() {
 
     client.on(
         "message",
-        function(topic, message) {
+        function(
+            topic,
+            message
+        ) {
 
             const payload =
                 message.toString();
@@ -1251,9 +1376,7 @@ function prosesMQTT(
 ) {
 
     /*
-    ============================
-    STATUS
-    ============================
+    STATUS OFFICE
     */
 
     if(
@@ -1263,22 +1386,8 @@ function prosesMQTT(
 
         updateStatus(
             1,
-            payload === "online"
-        );
-
-        return;
-
-    }
-
-
-    if(
-        topic ===
-        "tandon/2/status"
-    ) {
-
-        updateStatus(
-            2,
-            payload === "online"
+            payload.trim().toLowerCase()
+                === "online"
         );
 
         return;
@@ -1287,9 +1396,27 @@ function prosesMQTT(
 
 
     /*
-    ============================
-    DATA TANDON
-    ============================
+    STATUS MESJID
+    */
+
+    if(
+        topic ===
+        "tandon/2/status"
+    ) {
+
+        updateStatus(
+            2,
+            payload.trim().toLowerCase()
+                === "online"
+        );
+
+        return;
+
+    }
+
+
+    /*
+    DATA OFFICE
     */
 
     if(
@@ -1314,7 +1441,7 @@ function prosesMQTT(
         catch(error) {
 
             console.error(
-                "JSON Tandon 1 error",
+                "JSON Office error:",
                 error
             );
 
@@ -1324,6 +1451,10 @@ function prosesMQTT(
 
     }
 
+
+    /*
+    DATA MESJID
+    */
 
     if(
         topic ===
@@ -1347,7 +1478,7 @@ function prosesMQTT(
         catch(error) {
 
             console.error(
-                "JSON Tandon 2 error",
+                "JSON Mesjid error:",
                 error
             );
 
@@ -1376,18 +1507,15 @@ function updateTank(
             data.persen
         );
 
-
     const cm =
         Number(
             data.cm
         );
 
-
     const pulse =
         Number(
             data.pulse
         );
-
 
     const rssi =
         Number(
@@ -1396,76 +1524,116 @@ function updateTank(
 
 
     /*
-    ============================
     LEVEL
-    ============================
     */
 
-    document
-        .getElementById(
-            "percent" + id
-        )
-        .innerText =
-        percent + "%";
+    if(
+        Number.isFinite(percent)
+    ) {
+
+        const safePercent =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    percent
+                )
+            );
 
 
-    document
-        .getElementById(
-            "water" + id
-        )
-        .style.height =
-        percent + "%";
+        document
+            .getElementById(
+                "percent" + id
+            )
+            .innerText =
+            safePercent + "%";
+
+
+        document
+            .getElementById(
+                "water" + id
+            )
+            .style.height =
+            safePercent + "%";
+
+
+        /*
+        SIMPAN UNTUK REKAP PER JAM
+        */
+
+        saveHourlyData(
+            id,
+            safePercent
+        );
+
+
+        updateLevelStatus(
+            id,
+            safePercent
+        );
+
+    }
 
 
     /*
-    ============================
-    DISTANCE
-    ============================
+    JARAK
     */
 
-    document
-        .getElementById(
-            "cm" + id
-        )
-        .innerText =
-        cm.toFixed(1) +
-        " cm";
+    if(
+        Number.isFinite(cm)
+    ) {
+
+        document
+            .getElementById(
+                "cm" + id
+            )
+            .innerText =
+            cm.toFixed(1) +
+            " cm";
+
+    }
 
 
     /*
-    ============================
     PULSE
-    ============================
     */
 
-    document
-        .getElementById(
-            "pulse" + id
-        )
-        .innerText =
-        pulse +
-        " us";
+    if(
+        Number.isFinite(pulse)
+    ) {
+
+        document
+            .getElementById(
+                "pulse" + id
+            )
+            .innerText =
+            pulse +
+            " us";
+
+    }
 
 
     /*
-    ============================
     RSSI
-    ============================
     */
 
-    document
-        .getElementById(
-            "rssi" + id
-        )
-        .innerText =
-        rssi +
-        " dBm";
+    if(
+        Number.isFinite(rssi)
+    ) {
+
+        document
+            .getElementById(
+                "rssi" + id
+            )
+            .innerText =
+            rssi +
+            " dBm";
+
+    }
 
 
     /*
-    ============================
-    TIME
-    ============================
+    WAKTU
     */
 
     document
@@ -1474,13 +1642,46 @@ function updateTank(
         )
         .innerText =
         data.waktu ||
-        "--";
+        new Date()
+            .toLocaleTimeString(
+                "id-ID"
+            );
 
 
     /*
-    ============================
+    IP
+    */
+
+    if(
+        data.ip
+    ) {
+
+        document
+            .getElementById(
+                "ip" + id
+            )
+            .innerText =
+            data.ip;
+
+    }
+
+
+    /*
+    DATA
+    */
+
+    document
+        .getElementById(
+            "data" + id
+        )
+        .innerText =
+        "Realtime";
+
+
+    /*
     ONLINE
-    ============================
+
+    Setiap data masuk = perangkat hidup.
     */
 
     tanks[id].online =
@@ -1497,10 +1698,32 @@ function updateTank(
 
 
     /*
-    ============================
-    LEVEL STATUS
-    ============================
+    UPDATE TERAKHIR
     */
+
+    document
+        .getElementById(
+            "lastUpdate"
+        )
+        .innerText =
+        new Date()
+            .toLocaleTimeString(
+                "id-ID"
+            );
+
+}
+
+
+/*
+============================================================
+LEVEL STATUS
+============================================================
+*/
+
+function updateLevelStatus(
+    id,
+    percent
+) {
 
     const status =
         document
@@ -1508,8 +1731,22 @@ function updateTank(
                 "levelStatus" + id
             );
 
+    const percentElement =
+        document
+            .getElementById(
+                "percent" + id
+            );
 
-    if(percent < 20) {
+    const water =
+        document
+            .getElementById(
+                "water" + id
+            );
+
+
+    if(
+        percent < 20
+    ) {
 
         status.innerText =
             "🔴 LEVEL RENDAH";
@@ -1520,25 +1757,17 @@ function updateTank(
         status.style.background =
             "rgba(239,68,68,.15)";
 
-
-        document
-            .getElementById(
-                "percent" + id
-            )
-            .style.color =
+        percentElement.style.color =
             "#fb7185";
 
-
-        document
-            .getElementById(
-                "water" + id
-            )
-            .style.background =
+        water.style.background =
             "linear-gradient(180deg,#fb7185,#dc2626)";
 
     }
 
-    else if(percent <= 50) {
+    else if(
+        percent <= 50
+    ) {
 
         status.innerText =
             "🟡 LEVEL SEDANG";
@@ -1549,20 +1778,10 @@ function updateTank(
         status.style.background =
             "rgba(234,179,8,.15)";
 
-
-        document
-            .getElementById(
-                "percent" + id
-            )
-            .style.color =
+        percentElement.style.color =
             "#facc15";
 
-
-        document
-            .getElementById(
-                "water" + id
-            )
-            .style.background =
+        water.style.background =
             "linear-gradient(180deg,#facc15,#ea580c)";
 
     }
@@ -1578,63 +1797,13 @@ function updateTank(
         status.style.background =
             "rgba(34,197,94,.15)";
 
-
-        document
-            .getElementById(
-                "percent" + id
-            )
-            .style.color =
+        percentElement.style.color =
             "#38bdf8";
 
-
-        document
-            .getElementById(
-                "water" + id
-            )
-            .style.background =
+        water.style.background =
             "linear-gradient(180deg,#38bdf8,#2563eb)";
 
     }
-
-
-    /*
-    ============================
-    IP
-    ============================
-    */
-
-    if(data.ip) {
-
-        document
-            .getElementById(
-                "ip" + id
-            )
-            .innerText =
-            data.ip;
-
-    }
-
-
-    document
-        .getElementById(
-            "data" + id
-        )
-        .innerText =
-        "Realtime";
-
-
-    updateSummary();
-
-
-    document
-        .getElementById(
-            "lastUpdate"
-        )
-        .innerText =
-        new Date()
-            .toLocaleTimeString(
-                "id-ID"
-            );
 
 }
 
@@ -1698,12 +1867,18 @@ function updateSummary() {
     let online = 0;
 
 
-    if(tanks[1].online)
+    if(
+        tanks[1].online
+    ) {
         online++;
+    }
 
 
-    if(tanks[2].online)
+    if(
+        tanks[2].online
+    ) {
         online++;
+    }
 
 
     document
@@ -1745,11 +1920,14 @@ function setBrokerOffline() {
 
 /*
 ============================================================
-OFFLINE TIMEOUT
+TIMEOUT 30 DETIK
 ============================================================
 
-Kalau tidak ada data selama 15 detik,
-device dianggap offline.
+Kalau tidak menerima DATA selama 30 detik,
+tandon dianggap OFFLINE.
+
+Kalau ESP32 terus mengirim data,
+status akan tetap ONLINE.
 */
 
 setInterval(
@@ -1791,6 +1969,8 @@ setInterval(
 START
 ============================================================
 */
+
+renderHourlyData();
 
 connectMQTT();
 
