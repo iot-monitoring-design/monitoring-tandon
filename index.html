@@ -250,7 +250,7 @@ body::after{width:480px;height:480px;bottom:-160px;right:-120px;background:#0891
     <div class="brand">
       <div class="logo">💧</div>
       <div style="min-width:0">
-        <div class="title">Dashboard Master Tandon</div>
+        <div class="title">Master Tandon PPA site MLP</div>
         <div class="subtitle">Monitoring 6 Lokasi • ESP32 • HiveMQ Cloud</div>
       </div>
     </div>
@@ -288,7 +288,7 @@ body::after{width:480px;height:480px;bottom:-160px;right:-120px;background:#0891
   <div id="tankGrid" class="tank-grid"></div>
 
   <div class="chart-card">
-    <div class="chart-title">📊 Monitoring Level Air 24 Jam</div>
+    <div class="chart-title">📊 Monitoring Level Air</div>
     <div class="chart-subtitle">Grafik enam tandon dengan warna berbeda, berdasarkan data MQTT yang diterima selama 24 jam terakhir. Ketuk nama tandon pada legenda untuk menyembunyikan atau menampilkan garisnya.</div>
     <div class="chart-container"><canvas id="levelChart"></canvas></div>
   </div>
@@ -301,7 +301,7 @@ body::after{width:480px;height:480px;bottom:-160px;right:-120px;background:#0891
 const TANK_CONFIG=[
 {id:1,name:"Tandon Mesjid",location:"Area Mesjid",color:"#38bdf8"},
 {id:2,name:"Tandon Villa",location:"Area Villa",color:"#4ade80"},
-{id:3,name:"Tandon Mess",location:"Lokasi Mess",color:"#facc15"},
+{id:3,name:"Tandon Mess",location:"Area Mess",color:"#facc15"},
 {id:4,name:"Tandon 4",location:"Lokasi 4",color:"#fb7185"},
 {id:5,name:"Tandon 5",location:"Lokasi 5",color:"#a78bfa"},
 {id:6,name:"Tandon 6",location:"Lokasi 6",color:"#fb923c"}
@@ -312,7 +312,10 @@ const MQTT_HOST="a1cd69b564c54fb2a27c2ad31940a4d2.s1.eu.hivemq.cloud";
 const MQTT_PORT=8884;
 const MQTT_USERNAME="dashboard";
 const MQTT_PASSWORD="12345678";
-const OFFLINE_TIMEOUT=30000;
+
+/* Batas waktu tanpa data segar sebelum dianggap OFFLINE.
+   Atur sekitar 3x interval kirim ESP32 (mis. kirim tiap 5 dtk -> 15000). */
+const OFFLINE_TIMEOUT=15000;
 
 /* DATA INTERNAL */
 const tanks={};
@@ -449,13 +452,18 @@ day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false
 
 function pruneChart(now){
 const cutoff=now-WINDOW_MS;
+let removed=false;
 while(levelChart._timestamps.length && levelChart._timestamps[0]<cutoff){
 levelChart._timestamps.shift();
 levelChart.data.labels.shift();
 levelChart.data.datasets.forEach(ds=>ds.data.shift());
+removed=true;
 }
+/* index bucket hanya dibangun ulang kalau ada data yang dibuang */
+if(removed){
 chartBuckets.clear();
 levelChart._timestamps.forEach((ts,i)=>chartBuckets.set(ts,i));
+}
 }
 
 function addChartData(id,percent){
@@ -490,6 +498,7 @@ username:MQTT_USERNAME,
 password:MQTT_PASSWORD,
 clientId:clientID,
 clean:true,
+keepalive:30,
 connectTimeout:10000,
 reconnectPeriod:3000
 };
@@ -507,8 +516,10 @@ client.subscribe("tandon/"+c.id+"/status");
 });
 });
 
-client.on("message",function(topic,message){
-processMQTT(topic,message.toString());
+/* packet.retain = true berarti pesan LAMA yang disimpan broker,
+   bukan data live dari ESP32 */
+client.on("message",function(topic,message,packet){
+processMQTT(topic,message.toString(),!!(packet&&packet.retain));
 });
 
 client.on("error",function(error){
@@ -517,11 +528,12 @@ setBrokerOffline();
 });
 
 client.on("close",setBrokerOffline);
+client.on("offline",setBrokerOffline);
 client.on("reconnect",function(){console.log("MQTT RECONNECTING");});
 }
 
 /* MEMPROSES MQTT */
-function processMQTT(topic,payload){
+function processMQTT(topic,payload,retained){
 const match=topic.match(/^tandon\/(\d+)\/(data|status)$/);
 if(!match)return;
 
@@ -530,9 +542,14 @@ const type=match[2];
 if(!tanks[id])return;
 
 if(type==="status"){
-updateStatus(id,payload.trim().toLowerCase()==="online");
+/* Hanya "offline" yang dipercaya langsung.
+   "online" harus dibuktikan oleh data segar, karena status bisa retained/basi. */
+if(payload.trim().toLowerCase()==="offline")updateStatus(id,false);
 return;
 }
+
+/* data retained = snapshot lama dari broker, jangan dianggap live */
+if(retained)return;
 
 try{
 updateTank(id,JSON.parse(payload));
@@ -565,7 +582,6 @@ tanks[id].rssi=Number.isFinite(rssi)?rssi:null;
 tanks[id].ip=data.ip||null;
 tanks[id].waktu=data.waktu||null;
 tanks[id].lastMessage=Date.now();
-tanks[id].online=true;
 
 document.getElementById("percent"+id).innerHTML=
 Number.isFinite(percent)?percent+"<small>%</small>":"--<small>%</small>";
@@ -590,7 +606,6 @@ document.getElementById("ip"+id).innerText=data.ip||"--";
 document.getElementById("data"+id).innerText="Realtime";
 
 updateStatus(id,true);
-updateSummary();
 document.getElementById("lastUpdate").innerText=
 new Date().toLocaleTimeString("id-ID");
 }
@@ -625,6 +640,13 @@ el.innerText=online?"🟢 ONLINE":"🔴 OFFLINE";
 el.className="device-status "+(online?"connected":"disconnected");
 document.getElementById("card"+id).classList.toggle("is-offline",!online);
 tanks[id].online=online;
+
+/* saat offline, tandai bahwa angka yang tampil adalah data terakhir */
+if(!online){
+document.getElementById("data"+id).innerText=
+tanks[id].lastMessage>0?"Terputus (data terakhir)":"Menunggu";
+}
+
 updateSummary();
 }
 
@@ -636,10 +658,12 @@ const low=[];
 TANK_CONFIG.forEach(c=>{
 const t=tanks[c.id];
 if(t.online)online++;
-if(t.percent!==null&&Number.isFinite(t.percent)){
+/* rata-rata & peringatan hanya dari tandon yang sedang online,
+   supaya data basi tidak ikut dihitung */
+if(t.online&&t.percent!==null&&Number.isFinite(t.percent)){
 total+=t.percent;
 count++;
-if(t.online&&t.percent<20)low.push(c.name+" ("+t.percent+"%)");
+if(t.percent<20)low.push(c.name+" ("+t.percent+"%)");
 }
 });
 
@@ -667,22 +691,36 @@ function setBrokerOffline(){
 const el=document.getElementById("brokerStatus");
 document.getElementById("brokerText").innerText="MQTT OFFLINE";
 el.className="pill disconnected";
+/* broker putus = status semua tandon tidak diketahui, jangan tampil ONLINE */
+TANK_CONFIG.forEach(c=>{
+if(tanks[c.id].online)updateStatus(c.id,false);
+});
 }
 
-/* CEK OFFLINE DAN JENDELA GRAFIK */
+/* CEK OFFLINE (tiap 1 detik) DAN JENDELA GRAFIK */
 setInterval(function(){
 const now=Date.now();
 
 TANK_CONFIG.forEach(c=>{
 const t=tanks[c.id];
-if(t.lastMessage>0&&now-t.lastMessage>OFFLINE_TIMEOUT&&t.online){
+if(t.online&&now-t.lastMessage>OFFLINE_TIMEOUT){
 updateStatus(c.id,false);
 }
 });
 
 pruneChart(now);
 levelChart.update("none");
-},3000);
+},1000);
+
+/* Saat tab kembali aktif, langsung periksa ulang (timer tab background di-throttle browser) */
+document.addEventListener("visibilitychange",function(){
+if(document.visibilityState!=="visible")return;
+const now=Date.now();
+TANK_CONFIG.forEach(c=>{
+const t=tanks[c.id];
+if(t.online&&now-t.lastMessage>OFFLINE_TIMEOUT)updateStatus(c.id,false);
+});
+});
 
 /* START */
 document.getElementById("totalTank").innerText=TANK_CONFIG.length;
