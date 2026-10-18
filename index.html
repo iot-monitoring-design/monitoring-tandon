@@ -108,9 +108,49 @@ body::after{width:480px;height:480px;bottom:-160px;right:-120px;background:#0891
 .summary-value{font-size:24px;font-weight:800;letter-spacing:-.5px;white-space:nowrap}
 
 /* ===== SECTION ===== */
-.section-head{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 14px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 14px;gap:12px;flex-wrap:wrap}
 .section-head h2{font-size:15px;font-weight:700;color:#cbd5e1;letter-spacing:.2px}
 .section-head span{font-size:12px;color:var(--dim)}
+.head-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+
+/* ===== MODE RESTART ===== */
+.mode-toggle{display:inline-flex;align-items:center;gap:9px;cursor:pointer;user-select:none;
+  font-size:12px;font-weight:700;color:#cbd5e1}
+.mode-toggle input{position:absolute;opacity:0;pointer-events:none}
+.mode-toggle .switch{
+  position:relative;width:38px;height:22px;border-radius:99px;flex:none;
+  background:rgba(148,163,184,.25);border:1px solid var(--line);transition:background .25s,border-color .25s;
+}
+.mode-toggle .switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+  background:#e2e8f0;transition:transform .25s;
+}
+.mode-toggle input:checked + .switch{background:rgba(251,113,133,.35);border-color:rgba(251,113,133,.6)}
+.mode-toggle input:checked + .switch::after{transform:translateX(16px);background:#fb7185}
+.mode-toggle input:focus-visible + .switch{outline:2px solid var(--blue);outline-offset:2px}
+
+.btn-restart,.btn-restart-all{
+  font-family:inherit;font-weight:800;letter-spacing:.3px;cursor:pointer;color:#fecdd3;
+  border:1px solid rgba(248,113,113,.4);background:rgba(239,68,68,.14);
+  border-radius:12px;transition:background .2s,transform .1s,opacity .2s;
+}
+.btn-restart:hover:not(:disabled),.btn-restart-all:hover:not(:disabled){background:rgba(239,68,68,.26)}
+.btn-restart:active:not(:disabled),.btn-restart-all:active:not(:disabled){transform:scale(.98)}
+.btn-restart:disabled,.btn-restart-all:disabled{opacity:.5;cursor:not-allowed}
+.btn-restart{width:100%;padding:11px 14px;font-size:12.5px}
+.btn-restart-all{display:none;padding:8px 14px;font-size:11.5px}
+.restart-row{display:none;margin-top:12px}
+body.restart-mode .restart-row{display:block}
+body.restart-mode .btn-restart-all{display:inline-flex;align-items:center;gap:6px}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,20px);
+  z-index:100;padding:12px 18px;border-radius:14px;max-width:90vw;
+  background:rgba(2,6,23,.96);border:1px solid rgba(148,163,184,.3);
+  color:#f1f5f9;font-size:13px;font-weight:600;box-shadow:0 12px 36px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* ===== TANK GRID ===== */
 .tank-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -284,7 +324,18 @@ body::after{width:480px;height:480px;bottom:-160px;right:-120px;background:#0891
     </div>
   </div>
 
-  <div class="section-head"><h2>Status Tandon</h2><span>Realtime via MQTT</span></div>
+  <div class="section-head">
+    <h2>Status Tandon</h2>
+    <div class="head-actions">
+      <button id="restartAllBtn" class="btn-restart-all" type="button" onclick="restartAll()">🔄 Restart Semua</button>
+      <label class="mode-toggle">
+        <input type="checkbox" id="restartMode">
+        <span class="switch"></span>
+        <span>Mode Restart</span>
+      </label>
+      <span>Realtime via MQTT</span>
+    </div>
+  </div>
   <div id="tankGrid" class="tank-grid"></div>
 
   <div class="chart-card">
@@ -295,6 +346,8 @@ body::after{width:480px;height:480px;bottom:-160px;right:-120px;background:#0891
 
   <div class="footer">ESP32 Multi Tandon Monitoring • MQTT HiveMQ Cloud • GitHub Pages</div>
 </div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* KONFIGURASI TANDON */
@@ -316,6 +369,13 @@ const MQTT_PASSWORD="12345678";
 /* Batas waktu tanpa data segar sebelum dianggap OFFLINE.
    Atur sekitar 3x interval kirim ESP32 (mis. kirim tiap 5 dtk -> 15000). */
 const OFFLINE_TIMEOUT=15000;
+
+/* PERINTAH RESTART
+   Dashboard mengirim ke topik  tandon/<id>/cmd  dengan isi  restart
+   (ESP32 harus subscribe ke topik ini, lihat catatan di bawah file ini). */
+const CMD_PAYLOAD_RESTART="restart";
+const RESTART_COOLDOWN=30000;      /* tombol dikunci 30 dtk setelah kirim */
+const RESTART_MODE_AUTOLOCK=60000; /* Mode Restart mati sendiri setelah 60 dtk */
 
 /* DATA INTERNAL */
 const tanks={};
@@ -355,6 +415,9 @@ return `
 <div class="data-box"><div class="data-label">🕒 WAKTU</div><div id="time${c.id}" class="data-value">--</div></div>
 <div class="data-box"><div class="data-label">🌐 IP ESP32</div><div id="ip${c.id}" class="data-value">--</div></div>
 <div class="data-box"><div class="data-label">🔄 DATA</div><div id="data${c.id}" class="data-value">Menunggu</div></div>
+</div>
+<div class="restart-row">
+<button id="restartBtn${c.id}" class="btn-restart" type="button" onclick="restartTank(${c.id})">🔄 Restart ESP32</button>
 </div>
 </div>`;
 }
@@ -695,6 +758,86 @@ el.className="pill disconnected";
 TANK_CONFIG.forEach(c=>{
 if(tanks[c.id].online)updateStatus(c.id,false);
 });
+}
+
+/* ==================================================
+   MODE RESTART
+   - Tombol restart hanya muncul saat Mode Restart aktif
+   - Ada konfirmasi sebelum perintah dikirim
+   - Setelah dikirim, tombol dikunci sementara
+   - Mode Restart mati otomatis agar tidak kepencet
+================================================== */
+const restartModeEl=document.getElementById("restartMode");
+const restartAllBtn=document.getElementById("restartAllBtn");
+const toastEl=document.getElementById("toast");
+let restartModeTimer=null;
+let toastTimer=null;
+const restartLock={};   /* id -> timeout pembuka kunci */
+
+function showToast(msg){
+toastEl.innerText=msg;
+toastEl.classList.add("show");
+clearTimeout(toastTimer);
+toastTimer=setTimeout(()=>toastEl.classList.remove("show"),3500);
+}
+
+restartModeEl.addEventListener("change",function(){
+document.body.classList.toggle("restart-mode",restartModeEl.checked);
+clearTimeout(restartModeTimer);
+if(restartModeEl.checked){
+showToast("Mode Restart aktif — otomatis mati dalam "+(RESTART_MODE_AUTOLOCK/1000)+" detik");
+restartModeTimer=setTimeout(function(){
+restartModeEl.checked=false;
+document.body.classList.remove("restart-mode");
+showToast("Mode Restart dimatikan otomatis");
+},RESTART_MODE_AUTOLOCK);
+}
+});
+
+function mqttReady(){
+if(client&&client.connected)return true;
+showToast("MQTT belum terhubung, perintah tidak dikirim");
+return false;
+}
+
+function lockRestartButton(id){
+const btn=document.getElementById("restartBtn"+id);
+btn.disabled=true;
+btn.innerText="⏳ Perintah dikirim...";
+clearTimeout(restartLock[id]);
+restartLock[id]=setTimeout(function(){
+btn.disabled=false;
+btn.innerText="🔄 Restart ESP32";
+},RESTART_COOLDOWN);
+}
+
+function publishRestart(id){
+const topic="tandon/"+id+"/cmd";
+client.publish(topic,CMD_PAYLOAD_RESTART,{qos:1,retain:false},function(err){
+if(err){
+console.error("PUBLISH ERROR "+topic,err);
+showToast("Gagal mengirim restart ke Tandon "+id);
+}
+});
+lockRestartButton(id);
+}
+
+function restartTank(id){
+if(!mqttReady())return;
+const cfg=TANK_CONFIG.find(c=>c.id===id);
+if(!confirm("Restart ESP32 "+cfg.name+"?\n\nPerangkat akan terputus sebentar lalu online kembali."))return;
+publishRestart(id);
+showToast("Perintah restart dikirim ke "+cfg.name);
+}
+
+function restartAll(){
+if(!mqttReady())return;
+if(!confirm("Restart SEMUA ESP32 ("+TANK_CONFIG.length+" tandon)?\n\nSemua perangkat akan terputus sebentar."))return;
+TANK_CONFIG.forEach(c=>{
+const btn=document.getElementById("restartBtn"+c.id);
+if(!btn.disabled)publishRestart(c.id);
+});
+showToast("Perintah restart dikirim ke semua tandon");
 }
 
 /* CEK OFFLINE (tiap 1 detik) DAN JENDELA GRAFIK */
